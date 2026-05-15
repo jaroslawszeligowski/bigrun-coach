@@ -14,6 +14,10 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
   ai:
+    vectorstore:
+      pgvector:
+        dimensions: 768
+        initialize-schema: false
     ollama:
       enabled: ${OLLAMA_ENABLED:true}
       base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
