@@ -1,3 +1,8 @@
+app:
+  rag:
+    top-k: 3
+    similarity-threshold: 0.5
+
 spring:
   application:
     name: bigrun-coach
