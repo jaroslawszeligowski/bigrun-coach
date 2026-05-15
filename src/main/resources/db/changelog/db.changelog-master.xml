@@ -5,4 +5,5 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
     <include file="db/changelog/changes/20260515_001_enable-pgvector.xml"/>
     <include file="db/changelog/changes/20260515_002_create-vector-store.xml"/>
+    <include file="db/changelog/changes/20260515_003_create-knowledge-metadata.xml"/>
 </databaseChangeLog>
