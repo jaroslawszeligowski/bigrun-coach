@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    <changeSet id="20260515_002_create-vector-store" author="bigrun-coach">
+        <sql>
+            CREATE TABLE IF NOT EXISTS vector_store (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                content TEXT,
+                metadata JSONB,
+                embedding vector(768)
+            )
+        </sql>
+        <sql>CREATE INDEX IF NOT EXISTS vector_store_embedding_idx
+             ON vector_store USING hnsw (embedding vector_cosine_ops)</sql>
+    </changeSet>
+</databaseChangeLog>

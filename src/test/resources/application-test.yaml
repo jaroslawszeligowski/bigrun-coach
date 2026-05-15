@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:16:///bigrun-coach
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  ai:
+    ollama:
+      base-url: http://localhost:${wiremock.server.port}
+    google.genai.enabled: false
+    openai.enabled: false

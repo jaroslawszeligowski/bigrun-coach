@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:${DB_TYPE:postgresql}://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:bigrun-coach}${DB_OPTIONS:}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
