@@ -12,7 +12,6 @@ import org.wiremock.spring.EnableWireMock;
 @SpringBootTest
 @ActiveProfiles("test")
 @Testcontainers
-@EnableWireMock
 class BigrunCoachApplicationTests {
 
     @Container
