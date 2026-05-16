@@ -7,7 +7,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.wiremock.spring.EnableWireMock;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -21,5 +20,4 @@ class BigrunCoachApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }
