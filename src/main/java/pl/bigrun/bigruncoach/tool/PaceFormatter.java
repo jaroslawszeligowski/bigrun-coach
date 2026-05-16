@@ -34,6 +34,11 @@ public class PaceFormatter {
         return String.format("%d:%02d", minutes, seconds);
     }
 
+    public String formatSplitLine(String label, double from, double to, double paceSeconds, String note) {
+        return String.format("%s (%.1f-%.1f km): %s min/km — %s",
+                label, from, to, formatPaceFromSeconds(paceSeconds), note);
+    }
+
     public String formatDuration(double totalMinutes) {
         int hours   = (int) totalMinutes / MINUTES_PER_HOUR;
         int minutes = (int) totalMinutes % MINUTES_PER_HOUR;

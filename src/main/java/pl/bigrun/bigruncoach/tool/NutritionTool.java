@@ -50,7 +50,7 @@ public class NutritionTool {
         double fluidRateMlPerHour    = fluidRateFor(tempCelsius);
         double totalMl               = fluidRateMlPerHour * (durationMinutes / 60.0);
         int    portions              = durationMinutes / DRINKING_INTERVAL_MINUTES;
-        double mlPerPortion          = portions > 0 ? totalMl / portions : totalMl;
+        double mlPerPortion          = portions > 0 ? totalMl / portions : 0;
 
         return formatter.formatHydrationPlan(durationMinutes, tempCelsius, totalMl, category,
                 DRINKING_INTERVAL_MINUTES, mlPerPortion);

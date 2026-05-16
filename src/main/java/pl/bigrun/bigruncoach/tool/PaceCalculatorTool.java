@@ -32,21 +32,25 @@ public class PaceCalculatorTool {
     }
 
     @Tool(description = "Calculates running pace in min/km for given distance in km and target finish time in minutes. " +
-            "Use this when the user asks about pace, speed, or how fast they should run.")
-    public String calculatePace(double distanceKm, int targetTimeMinutes) {
-        if (distanceKm <= 0 || targetTimeMinutes <= 0) {
+            "Parameters: distanceKm (e.g. 42.195 for marathon, 21.0975 for half marathon, 10.0 for 10km), " +
+            "targetTimeMinutes (e.g. 240 for 4 hours, 90 for 1h30m). " +
+            "Use this when the user knows the distance and desired finish time and wants to know the required pace.")
+    public String calculatePace(double distanceKm, double targetTimeMinutes) {
+        if (isNotPositive(distanceKm) || isNotPositive(targetTimeMinutes)) {
             return "Invalid input: distance and time must be positive values.";
         }
-        double paceSeconds = (targetTimeMinutes * (double) SECONDS_PER_MINUTE) / distanceKm;
-        double speedKmh = distanceKm / (targetTimeMinutes / 60.0);
-        return String.format("Pace: %s min/km (%.1f km/h) for %.1f km in %d min",
+        double paceSeconds = toPaceSeconds(distanceKm, targetTimeMinutes);
+        double speedKmh    = distanceKm / (targetTimeMinutes / SECONDS_PER_MINUTE);
+        return String.format("Pace: %s min/km (%.1f km/h) for %.1f km in %.0f min",
                 formatter.formatPaceFromSeconds(paceSeconds), speedKmh, distanceKm, targetTimeMinutes);
     }
 
-    @Tool(description = "Calculates finish time for given distance in km and running pace in min/km (as decimal, e.g. 5.5 means 5:30 min/km). " +
-            "Use this when the user asks what time they will finish, how long the run will take, or what their finish time will be.")
+    @Tool(description = "Calculates finish time for given distance in km and running pace in min/km. " +
+            "Parameters: distanceKm (e.g. 42.195 for marathon, 10.0 for 10km), " +
+            "paceMinPerKm as decimal where minutes and fraction represent seconds (e.g. 5.5 = 5:30, 4.75 = 4:45, 6.0 = 6:00). " +
+            "Use this when the user knows the distance and their pace and wants to know the estimated finish time.")
     public String calculateFinishTime(double distanceKm, double paceMinPerKm) {
-        if (distanceKm <= 0 || paceMinPerKm <= 0) {
+        if (isNotPositive(distanceKm) || isNotPositive(paceMinPerKm)) {
             return "Invalid input: distance and pace must be positive values.";
         }
         double totalMinutes = distanceKm * paceMinPerKm;
@@ -54,21 +58,25 @@ public class PaceCalculatorTool {
                 formatter.formatDuration(totalMinutes), distanceKm, formatter.formatPaceFromDecimal(paceMinPerKm));
     }
 
-    @Tool(description = "Calculates distance covered for given running pace in min/km (as decimal) and duration in minutes. " +
-            "Use this when the user asks how far they will run, what distance they will cover, or how many km at a given pace and time.")
-    public String calculateDistance(double paceMinPerKm, int durationMinutes) {
-        if (paceMinPerKm <= 0 || durationMinutes <= 0) {
+    @Tool(description = "Calculates distance covered in km for given running pace in min/km and duration in minutes. " +
+            "Parameters: paceMinPerKm as decimal (e.g. 5.5 = 5:30, 6.0 = 6:00 min/km), " +
+            "durationMinutes (e.g. 60 for 1 hour, 90 for 1h30m, 30 for 30 minutes). " +
+            "Use this when the user knows their pace and how long they will run and wants to know the distance covered.")
+    public String calculateDistance(double paceMinPerKm, double durationMinutes) {
+        if (isNotPositive(paceMinPerKm) || isNotPositive(durationMinutes)) {
             return "Invalid input: pace and duration must be positive values.";
         }
         double distanceKm = durationMinutes / paceMinPerKm;
-        return String.format("Distance: %.2f km running %d min at %s min/km",
+        return String.format("Distance: %.2f km running %.0f min at %s min/km",
                 distanceKm, durationMinutes, formatter.formatPaceFromDecimal(paceMinPerKm));
     }
 
-    @Tool(description = "Calculates training pace zones based on race pace in min/km (as decimal) and desired intensity percentage (e.g. 75 for easy run, 85 for tempo, 95 for intervals). " +
-            "Use this when the user asks about training pace, easy run pace, tempo pace, intervals pace, or training zones.")
+    @Tool(description = "Calculates training pace in min/km for a given race pace and desired intensity percentage. " +
+            "Parameters: racePaceMinPerKm as decimal (e.g. 5.0 = 5:00, 4.5 = 4:30 min/km — the pace achieved in a recent race), " +
+            "intensityPercent as integer 1-100 (e.g. 65-75 for easy/recovery run, 80-85 for tempo, 90-95 for intervals, 100 for race pace). " +
+            "Use this when the user asks about training zones, how fast to run easy runs, tempo runs, or interval training.")
     public String calculateTrainingPace(double racePaceMinPerKm, int intensityPercent) {
-        if (racePaceMinPerKm <= 0 || intensityPercent <= 0 || intensityPercent > 100) {
+        if (isNotPositive(racePaceMinPerKm) || intensityPercent <= 0 || intensityPercent > 100) {
             return "Invalid input: pace must be positive and intensity must be between 1 and 100.";
         }
         double racePaceSeconds     = racePaceMinPerKm * SECONDS_PER_MINUTE;
@@ -81,33 +89,37 @@ public class PaceCalculatorTool {
                 formatter.formatPaceFromDecimal(racePaceMinPerKm));
     }
 
-    @Tool(description = "Returns split strategy for given distance in km and target finish time in minutes. " +
-            "Provides recommended splits for each quarter of the race. " +
-            "Use this when user asks about splits, pacing strategy, or race plan.")
-    public String calculateSplitStrategy(double distanceKm, int targetTimeMinutes) {
-        if (distanceKm <= 0 || targetTimeMinutes <= 0) {
+    @Tool(description = "Returns a pacing strategy divided into four equal quarters for given distance and target finish time. " +
+            "Parameters: distanceKm (e.g. 42.195 for marathon, 21.0975 for half marathon, 10.0 for 10km), " +
+            "targetTimeMinutes (e.g. 210 for 3h30m, 240 for 4h, 50 for 50 minutes). " +
+            "Use this when the user asks about race strategy, how to pace a race, negative splits, or race plan.")
+    public String calculateSplitStrategy(double distanceKm, double targetTimeMinutes) {
+        if (isNotPositive(distanceKm) || isNotPositive(targetTimeMinutes)) {
             return "Invalid input: distance and time must be positive values.";
         }
-        double paceSeconds  = (targetTimeMinutes * (double) SECONDS_PER_MINUTE) / distanceKm;
-        double quarter      = distanceKm / QUARTERS;
-        double halfwayMin   = targetTimeMinutes / 2.0;
+        double paceSeconds = toPaceSeconds(distanceKm, targetTimeMinutes);
+        double quarter     = distanceKm / QUARTERS;
+        double halfwayMin  = targetTimeMinutes / 2.0;
 
         return String.format(
-                "Split strategy for %.1f km in %d min:%n" +
+                "Split strategy for %.1f km in %.0f min:%n" +
                 "Target pace: %s min/km%n" +
                 "%s%n%s%n%s%n%s%n" +
                 "Halfway target: %.0f min",
                 distanceKm, targetTimeMinutes,
                 formatter.formatPaceFromSeconds(paceSeconds),
-                buildSplitLine("Q1", 0,          quarter,     paceSeconds * CONSERVATIVE_FACTOR, "start conservatively"),
-                buildSplitLine("Q2", quarter,     2 * quarter, paceSeconds,                       "settle into race pace"),
-                buildSplitLine("Q3", 2 * quarter, 3 * quarter, paceSeconds,                       "maintain pace"),
-                buildSplitLine("Q4", 3 * quarter, distanceKm,  paceSeconds * AGGRESSIVE_FACTOR,   "push if you have energy left"),
+                formatter.formatSplitLine("Q1", 0,          quarter,     paceSeconds * CONSERVATIVE_FACTOR, "start conservatively"),
+                formatter.formatSplitLine("Q2", quarter,     2 * quarter, paceSeconds,                       "settle into race pace"),
+                formatter.formatSplitLine("Q3", 2 * quarter, 3 * quarter, paceSeconds,                       "maintain pace"),
+                formatter.formatSplitLine("Q4", 3 * quarter, distanceKm,  paceSeconds * AGGRESSIVE_FACTOR,   "push if you have energy left"),
                 halfwayMin);
     }
 
-    private String buildSplitLine(String label, double from, double to, double paceSeconds, String note) {
-        return String.format("%s (%.1f-%.1f km): %s min/km — %s",
-                label, from, to, formatter.formatPaceFromSeconds(paceSeconds), note);
+    private double toPaceSeconds(double distanceKm, double timeMinutes) {
+        return (timeMinutes * SECONDS_PER_MINUTE) / distanceKm;
+    }
+
+    private boolean isNotPositive(double value) {
+        return Double.isNaN(value) || Double.isInfinite(value) || value <= 0;
     }
 }
