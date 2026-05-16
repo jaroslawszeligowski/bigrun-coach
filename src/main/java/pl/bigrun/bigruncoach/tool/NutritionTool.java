@@ -20,56 +20,52 @@ import org.springframework.stereotype.Component;
 @Component
 public class NutritionTool {
 
-    @Tool(description = "Calculates recommended fluid intake in ml for a run of given duration and temperature. Use this when user asks about hydration, drinking, water intake, or fluids during running.")
+    private static final double BASE_FLUID_ML_PER_HOUR    = 500;
+    private static final double HEAT_FLUID_ML_PER_DEGREE  = 30;
+    private static final double HEAT_THRESHOLD_CELSIUS    = 20;
+    private static final int    DRINKING_INTERVAL_MINUTES = 15;
+    private static final int    CARBS_GRAMS_PER_HOUR      = 60;
+    private static final int    CARBS_PER_GEL_GRAMS       = 25;
+
+    private final NutritionFormatter formatter;
+
+    public NutritionTool(NutritionFormatter formatter) {
+        this.formatter = formatter;
+    }
+
+    @Tool(description = "Calculates recommended fluid intake in ml for a run of given duration and temperature. " +
+            "Use this when user asks about hydration, drinking, water intake, or fluids during running.")
     public String calculateHydration(int durationMinutes, double tempCelsius) {
         if (durationMinutes <= 0) {
             return "Invalid input: duration must be positive.";
         }
-        double baseRateMlPerHour = 500;
-        if (tempCelsius > 20) {
-            baseRateMlPerHour += (tempCelsius - 20) * 30;
-        }
-        double totalMl = baseRateMlPerHour * (durationMinutes / 60.0);
-        int drinkingIntervalMin = durationMinutes <= 30 ? 0 : 15;
+        RunDurationCategory category = RunDurationCategory.fromDuration(durationMinutes);
+        double fluidRateMlPerHour    = fluidRateFor(tempCelsius);
+        double totalMl               = fluidRateMlPerHour * (durationMinutes / 60.0);
+        int    portions              = durationMinutes / DRINKING_INTERVAL_MINUTES;
+        double mlPerPortion          = portions > 0 ? totalMl / portions : totalMl;
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Hydration plan for %d min run at %.1f°C:%n", durationMinutes, tempCelsius));
-        sb.append(String.format("Total fluid intake: %.0f ml%n", totalMl));
-        if (durationMinutes <= 30) {
-            sb.append("Short run — hydration before and after is sufficient, no drinking needed mid-run.");
-        } else {
-            int portions = durationMinutes / drinkingIntervalMin;
-            double mlPerPortion = totalMl / portions;
-            sb.append(String.format("Drink every %d minutes: ~%.0f ml per portion%n", drinkingIntervalMin, mlPerPortion));
-            if (durationMinutes >= 60) {
-                sb.append("Consider sports drink or electrolytes for runs over 60 min.");
-            }
-        }
-        return sb.toString();
+        return formatter.formatHydrationPlan(durationMinutes, tempCelsius, totalMl, category,
+                DRINKING_INTERVAL_MINUTES, mlPerPortion);
     }
 
-    @Tool(description = "Calculates recommended carbohydrate intake in grams for a run of given duration. Use this when user asks about nutrition, carbs, gels, energy, or fueling during running.")
+    @Tool(description = "Calculates recommended carbohydrate intake in grams for a run of given duration. " +
+            "Use this when user asks about nutrition, carbs, gels, energy, or fueling during running.")
     public String calculateCarbohydrates(int durationMinutes) {
         if (durationMinutes <= 0) {
             return "Invalid input: duration must be positive.";
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Carbohydrate plan for %d min run:%n", durationMinutes));
+        RunDurationCategory category = RunDurationCategory.fromDuration(durationMinutes);
+        int totalCarbs = (int) ((durationMinutes / 60.0) * CARBS_GRAMS_PER_HOUR);
+        int gels       = totalCarbs / CARBS_PER_GEL_GRAMS;
 
-        if (durationMinutes < 60) {
-            sb.append("Under 60 min — no carbohydrates needed during the run.%n".formatted());
-            sb.append("Ensure adequate pre-run meal 2-3 hours before.");
-        } else if (durationMinutes < 90) {
-            sb.append("60-90 min — optional 20-30g carbohydrates (1 gel) after 45 min%n");
-            sb.append("Example: 1 energy gel or 400ml sports drink.");
-        } else {
-            double hoursRunning = durationMinutes / 60.0;
-            int totalCarbs = (int) (hoursRunning * 60);
-            int gels = totalCarbs / 25;
-            sb.append(String.format("Total carbs: ~%dg (~%d energy gels)%n", totalCarbs, gels));
-            sb.append(String.format("Start fueling after 30-45 min, then every 30-45 min%n"));
-            sb.append(String.format("Take gels with water (150-200ml) to aid absorption."));
+        return formatter.formatCarbPlan(durationMinutes, category, totalCarbs, gels);
+    }
+
+    private double fluidRateFor(double tempCelsius) {
+        if (tempCelsius > HEAT_THRESHOLD_CELSIUS) {
+            return BASE_FLUID_ML_PER_HOUR + (tempCelsius - HEAT_THRESHOLD_CELSIUS) * HEAT_FLUID_ML_PER_DEGREE;
         }
-        return sb.toString();
+        return BASE_FLUID_ML_PER_HOUR;
     }
 }

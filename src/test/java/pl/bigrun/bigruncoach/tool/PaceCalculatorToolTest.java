@@ -24,7 +24,7 @@ class PaceCalculatorToolTest {
 
     @BeforeEach
     void setUp() {
-        tool = new PaceCalculatorTool();
+        tool = new PaceCalculatorTool(new PaceFormatter());
     }
 
     @Test

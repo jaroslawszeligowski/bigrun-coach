@@ -24,7 +24,7 @@ class NutritionToolTest {
 
     @BeforeEach
     void setUp() {
-        tool = new NutritionTool();
+        tool = new NutritionTool(new NutritionFormatter());
     }
 
     @Test
