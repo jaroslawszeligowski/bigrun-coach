@@ -20,9 +20,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class NutritionTool {
 
+    private static final double COLD_FLUID_ML_PER_HOUR    = 300;
+    private static final double COOL_FLUID_ML_PER_HOUR    = 400;
     private static final double BASE_FLUID_ML_PER_HOUR    = 500;
     private static final double HEAT_FLUID_ML_PER_DEGREE  = 30;
+
+    private static final double COLD_THRESHOLD_CELSIUS    = 0;
+    private static final double COOL_THRESHOLD_CELSIUS    = 10;
     private static final double HEAT_THRESHOLD_CELSIUS    = 20;
+
     private static final int    DRINKING_INTERVAL_MINUTES = 15;
     private static final int    CARBS_GRAMS_PER_HOUR      = 60;
     private static final int    CARBS_PER_GEL_GRAMS       = 25;
@@ -34,6 +40,7 @@ public class NutritionTool {
     }
 
     @Tool(description = "Calculates recommended fluid intake in ml for a run of given duration and temperature. " +
+            "Accounts for cold weather (reduced intake) and hot weather (increased intake). " +
             "Use this when user asks about hydration, drinking, water intake, or fluids during running.")
     public String calculateHydration(int durationMinutes, double tempCelsius) {
         if (durationMinutes <= 0) {
@@ -63,9 +70,9 @@ public class NutritionTool {
     }
 
     private double fluidRateFor(double tempCelsius) {
-        if (tempCelsius > HEAT_THRESHOLD_CELSIUS) {
-            return BASE_FLUID_ML_PER_HOUR + (tempCelsius - HEAT_THRESHOLD_CELSIUS) * HEAT_FLUID_ML_PER_DEGREE;
-        }
-        return BASE_FLUID_ML_PER_HOUR;
+        if (tempCelsius < COLD_THRESHOLD_CELSIUS) return COLD_FLUID_ML_PER_HOUR;
+        if (tempCelsius < COOL_THRESHOLD_CELSIUS) return COOL_FLUID_ML_PER_HOUR;
+        if (tempCelsius <= HEAT_THRESHOLD_CELSIUS) return BASE_FLUID_ML_PER_HOUR;
+        return BASE_FLUID_ML_PER_HOUR + (tempCelsius - HEAT_THRESHOLD_CELSIUS) * HEAT_FLUID_ML_PER_DEGREE;
     }
 }
