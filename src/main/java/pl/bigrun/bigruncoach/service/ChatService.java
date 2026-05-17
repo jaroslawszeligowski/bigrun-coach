@@ -57,6 +57,8 @@ public class ChatService {
                 .call()
                 .content();
 
+        log.info("LLM prompt content: {}", prompt.getContents());
+
         log.debug("LLM response length: {} chars", response.length());
         return response;
     }
