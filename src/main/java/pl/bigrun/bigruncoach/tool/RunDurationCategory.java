@@ -41,7 +41,7 @@ public enum RunDurationCategory {
 
         @Override
         public String formatCarbPlan(int totalCarbs, int gels) {
-            return "Under 60 min — no carbohydrates needed during the run.\n" +
+            return "30–60 min — no carbohydrates needed during the run.\n" +
                    "Ensure adequate pre-run meal 2-3 hours before.";
         }
     },

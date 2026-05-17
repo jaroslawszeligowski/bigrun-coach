@@ -38,7 +38,7 @@ public class PaceCalculatorTool {
             "targetTimeMinutes (e.g. 240 for 4 hours, 90 for 1h30m). " +
             "Use this when the user knows the distance and desired finish time and wants to know the required pace.")
     public String calculatePace(double distanceKm, double targetTimeMinutes) {
-        log.info(">>> TOOL CALLED: calculatePace(" + distanceKm + ", " + targetTimeMinutes + ")");
+        log.info(">>> TOOL CALLED: calculatePace({}, {})", distanceKm, targetTimeMinutes);
         if (isNotPositive(distanceKm) || isNotPositive(targetTimeMinutes)) {
             return "Invalid input: distance and time must be positive values.";
         }
@@ -53,7 +53,7 @@ public class PaceCalculatorTool {
             "paceMinPerKm as decimal where minutes and fraction represent seconds (e.g. 5.5 = 5:30, 4.75 = 4:45, 6.0 = 6:00). " +
             "Use this when the user knows the distance and their pace and wants to know the estimated finish time.")
     public String calculateFinishTime(double distanceKm, double paceMinPerKm) {
-        log.info(">>> TOOL CALLED: calculateFinishTime(" + distanceKm + ", " + paceMinPerKm + ")");
+        log.info(">>> TOOL CALLED: calculateFinishTime({}, {})", distanceKm, paceMinPerKm);
         if (isNotPositive(distanceKm) || isNotPositive(paceMinPerKm)) {
             return "Invalid input: distance and pace must be positive values.";
         }
@@ -67,7 +67,7 @@ public class PaceCalculatorTool {
             "durationMinutes (e.g. 60 for 1 hour, 90 for 1h30m, 30 for 30 minutes). " +
             "Use this when the user knows their pace and how long they will run and wants to know the distance covered.")
     public String calculateDistance(double paceMinPerKm, double durationMinutes) {
-        log.info(">>> TOOL CALLED: calculateDistance(" + paceMinPerKm + ", " + durationMinutes + ")");
+        log.info(">>> TOOL CALLED: calculateDistance({}, {})", paceMinPerKm, durationMinutes);
         if (isNotPositive(paceMinPerKm) || isNotPositive(durationMinutes)) {
             return "Invalid input: pace and duration must be positive values.";
         }
@@ -81,7 +81,7 @@ public class PaceCalculatorTool {
             "intensityPercent as integer 1-100 (e.g. 65-75 for easy/recovery run, 80-85 for tempo, 90-95 for intervals, 100 for race pace). " +
             "Use this when the user asks about training zones, how fast to run easy runs, tempo runs, or interval training.")
     public String calculateTrainingPace(double racePaceMinPerKm, int intensityPercent) {
-        log.info(">>> TOOL CALLED: calculateTrainingPace(" + racePaceMinPerKm + ", " + intensityPercent + ")");
+        log.info(">>> TOOL CALLED: calculateTrainingPace({}, {})", racePaceMinPerKm, intensityPercent);
         if (isNotPositive(racePaceMinPerKm) || intensityPercent <= 0 || intensityPercent > 100) {
             return "Invalid input: pace must be positive and intensity must be between 1 and 100.";
         }
@@ -100,7 +100,7 @@ public class PaceCalculatorTool {
             "targetTimeMinutes (e.g. 210 for 3h30m, 240 for 4h, 50 for 50 minutes). " +
             "Use this when the user asks about race strategy, how to pace a race, negative splits, or race plan.")
     public String calculateSplitStrategy(double distanceKm, double targetTimeMinutes) {
-        log.info(">>> TOOL CALLED: calculateSplitStrategy(" + distanceKm + ", " + targetTimeMinutes + ")");
+        log.info(">>> TOOL CALLED: calculateSplitStrategy({}, {})", distanceKm, targetTimeMinutes);
         if (isNotPositive(distanceKm) || isNotPositive(targetTimeMinutes)) {
             return "Invalid input: distance and time must be positive values.";
         }

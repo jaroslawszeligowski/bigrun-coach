@@ -48,7 +48,7 @@ public class NutritionTool {
             "Accounts for cold weather (reduced intake) and hot weather (increased intake). " +
             "Use this when user asks about hydration, drinking, water intake, or fluids during running.")
     public String calculateHydration(double durationMinutes, double tempCelsius) {
-        log.info(">>> TOOL CALLED: calculateHydration(" + durationMinutes + ", " + tempCelsius + ")");
+        log.info(">>> TOOL CALLED: calculateHydration({}, {})", durationMinutes, tempCelsius);
         if (durationMinutes <= 0) {
             return "Invalid input: duration must be positive.";
         }
@@ -70,7 +70,7 @@ public class NutritionTool {
             "Returns total grams and number of energy gels needed. " +
             "Use this when user asks about nutrition, carbs, gels, energy, or fueling during running.")
     public String calculateCarbohydrates(double durationMinutes) {
-        log.info(">>> TOOL CALLED: calculateCarbohydrates(" + durationMinutes + ")");
+        log.info(">>> TOOL CALLED: calculateCarbohydrates({})", durationMinutes);
         if (durationMinutes <= 0) {
             return "Invalid input: duration must be positive.";
         }
