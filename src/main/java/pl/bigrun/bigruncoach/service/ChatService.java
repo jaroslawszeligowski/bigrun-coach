@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.template.st.StStringTemplate;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class ChatService {
         String context = ragService.findRelevantContext(message);
         log.debug("RAG context length: {} chars", context.length());
 
-        Prompt prompt = new StStringTemplate(templateResource)
+        Prompt prompt = new PromptTemplate(templateResource)
                 .create(Map.of(
                         "context",  context,
                         "question", message
