@@ -57,6 +57,7 @@
             <artifactId>spring-ai-starter-model-ollama</artifactId>
         </dependency>
 
+        <!-- waiting for stable release of spring ai 2.x - then can use remote ai api with spring 4.x -->
         <!-- Provider 2: Google Gemini — free tier, aistudio.google.com -->
         <!--
         <dependency>
