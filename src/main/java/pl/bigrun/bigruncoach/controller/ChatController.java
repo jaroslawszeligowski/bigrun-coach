@@ -36,8 +36,8 @@ public class ChatController {
 
     @PostMapping
     public ResponseEntity<ChatResponse> chat(@Valid @RequestBody ChatRequest request) {
-        log.info("Chat request received: '{}'", request.message());
-        String answer = chatService.chat(request.message());
+        log.info("Chat request received: '{}' [model={}]", request.message(), request.model());
+        String answer = chatService.chat(request.message(), request.model());
         log.info("Chat response sent: '{}'", answer);
         return ResponseEntity.ok(new ChatResponse(answer));
     }

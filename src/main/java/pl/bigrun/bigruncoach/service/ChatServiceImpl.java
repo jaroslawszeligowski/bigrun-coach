@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -42,9 +43,18 @@ public class ChatServiceImpl implements ChatService {
     @Value("classpath:prompt-template.st")
     private Resource templateResource;
 
-    public String chat(String message) {
+    @Value("${app.models.smart}")
+    private String smartModel;
+
+    @Value("${app.models.fast}")
+    private String fastModel;
+
+    public String chat(String message, String model) {
         String context = ragService.findRelevantContext(message);
         log.debug("RAG context length: {} chars", context.length());
+
+        String selectedModel = "fast".equalsIgnoreCase(model) ? fastModel : smartModel;
+        log.info("Using model: {}", selectedModel);
 
         Prompt prompt = new PromptTemplate(templateResource)
                 .create(Map.of(
@@ -56,6 +66,7 @@ public class ChatServiceImpl implements ChatService {
 
         String response = chatClient
                 .prompt(prompt)
+                .options(OllamaChatOptions.builder().model(selectedModel).build())
                 .tools(paceCalculatorTool, nutritionTool)
                 .call()
                 .content();

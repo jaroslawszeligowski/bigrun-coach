@@ -2,6 +2,9 @@ app:
   rag:
     top-k: 3
     similarity-threshold: 0.5
+  models:
+    smart: ${OLLAMA_SMART_MODEL:qwen2.5:14b}
+    fast: ${OLLAMA_FAST_MODEL:llama3.2:3b}
 
 spring:
   application:
@@ -23,7 +26,7 @@ spring:
       base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
       chat:
         options:
-          model: ${OLLAMA_CHAT_MODEL:qwen2.5:14b}
+          model: ${OLLAMA_SMART_MODEL:qwen2.5:14b}
       embedding:
         options:
           model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}

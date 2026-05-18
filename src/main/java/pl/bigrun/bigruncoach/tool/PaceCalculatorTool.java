@@ -80,16 +80,17 @@ public class PaceCalculatorTool {
             "Parameters: racePaceMinPerKm as decimal (e.g. 5.0 = 5:00, 4.5 = 4:30 min/km — the pace achieved in a recent race), " +
             "intensityPercent as integer 1-100 (e.g. 65-75 for easy/recovery run, 80-85 for tempo, 90-95 for intervals, 100 for race pace). " +
             "Use this when the user asks about training zones, how fast to run easy runs, tempo runs, or interval training.")
-    public String calculateTrainingPace(double racePaceMinPerKm, int intensityPercent) {
+    public String calculateTrainingPace(double racePaceMinPerKm, double intensityPercent) {
         log.info(">>> TOOL CALLED: calculateTrainingPace({}, {})", racePaceMinPerKm, intensityPercent);
-        if (isNotPositive(racePaceMinPerKm) || intensityPercent <= 0 || intensityPercent > 100) {
+        int intensity = (int) intensityPercent;
+        if (isNotPositive(racePaceMinPerKm) || intensity <= 0 || intensity > 100) {
             return "Invalid input: pace must be positive and intensity must be between 1 and 100.";
         }
         double racePaceSeconds     = racePaceMinPerKm * SECONDS_PER_MINUTE;
-        double trainingPaceSeconds = racePaceSeconds / (intensityPercent / 100.0);
-        TrainingZone zone          = TrainingZone.fromIntensity(intensityPercent);
+        double trainingPaceSeconds = racePaceSeconds / (intensity / 100.0);
+        TrainingZone zone          = TrainingZone.fromIntensity(intensity);
         return String.format("Training pace at %d%% intensity: %s min/km%nZone: %s%nBased on race pace: %s min/km",
-                intensityPercent,
+                intensity,
                 formatter.formatPaceFromSeconds(trainingPaceSeconds),
                 zone.getLabel(),
                 formatter.formatPaceFromDecimal(racePaceMinPerKm));
