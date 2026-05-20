@@ -1,0 +1,309 @@
+{
+  "info": {
+    "name": "BigRun Coach API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081"
+    }
+  ],
+  "item": [
+    {
+      "name": "Config",
+      "item": [
+        {
+          "name": "GET active config",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/config"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has provider\", () => pm.expect(pm.response.json().provider).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Has smartModel\", () => pm.expect(pm.response.json().smartModel).to.be.a('string').and.not.empty);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chat — Tool Calling",
+      "item": [
+        {
+          "name": "Pace for marathon 3h",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"Pace for 3h marathon?\", \"model\": \"smart\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Finish time at 5:00/km for 42km",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"Finish time at 5:00/km for 42km?\", \"model\": \"smart\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Distance in 90min at 4:30/km",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"Distance in 90min at 4:30/km?\", \"model\": \"fast\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Split strategy 3:30 marathon",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"Split strategy for 3:30 marathon?\", \"model\": \"smart\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Water for 2h at 28°C",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"Water for 2h run at 28°C?\", \"model\": \"fast\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Carbs for 3h run",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"Carbs for 3h run?\", \"model\": \"smart\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chat — RAG",
+      "item": [
+        {
+          "name": "Threshold heart rate",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"What is threshold heart rate?\", \"model\": \"smart\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Breathing in cold weather",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"How to breathe in cold weather?\", \"model\": \"smart\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Common running injuries",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"Most common running injuries?\", \"model\": \"fast\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Marathon tapering strategy",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"Marathon tapering strategy?\", \"model\": \"smart\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Has answer\", () => pm.expect(pm.response.json().answer).to.be.a('string').and.not.empty);",
+                  "pm.test(\"Response time < 60s\", () => pm.expect(pm.response.responseTime).to.be.below(60000));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chat — Validation",
+      "item": [
+        {
+          "name": "Empty message → 400",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Has status field\", () => pm.expect(pm.response.json().status).to.equal(400));",
+                  "pm.test(\"Has message field\", () => pm.expect(pm.response.json().message).to.be.a('string').and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Off-domain question → refused",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/chat",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"message\": \"Give me a pizza recipe\", \"model\": \"fast\"}" }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Answer is refusal\", () => {",
+                  "    const answer = pm.response.json().answer.toLowerCase();",
+                  "    pm.expect(answer).to.satisfy(a =>",
+                  "        a.includes('only') || a.includes('running') || a.includes('cannot') || a.includes('sorry') || a.includes('apologize')",
+                  "    );",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
