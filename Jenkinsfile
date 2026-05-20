@@ -23,6 +23,8 @@ pipeline {
                 OLLAMA_BASE_URL = credentials('ollama-base-url')
             }
             steps {
+//                 sh 'printf "DB_NAME=%s\nDB_USERNAME=%s\nDB_PASSWORD=%s\nOLLAMA_BASE_URL=%s\n" "$DB_NAME" "$DB_USERNAME" "$DB_PASSWORD" "$OLLAMA_BASE_URL" > .env'
+                sh 'touch .env'
                 sh 'docker-compose down'
                 sh 'docker-compose up -d'
             }
