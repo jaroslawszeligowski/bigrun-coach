@@ -2,5 +2,8 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Install docker CLI, docker-compose and git
-RUN apt-get update && apt-get install -y docker.io docker-compose git && rm -rf /var/lib/apt/lists/*
+# Install docker CLI, docker-compose, git and Node.js (for newman)
+RUN apt-get update && apt-get install -y docker.io docker-compose git nodejs npm && rm -rf /var/lib/apt/lists/*
+
+# Install newman (Postman CLI runner)
+RUN npm install -g newman
