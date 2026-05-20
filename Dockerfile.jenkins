@@ -4,3 +4,8 @@ USER root
 
 # Install docker CLI and git
 RUN apt-get update && apt-get install -y docker.io docker-compose git && rm -rf /var/lib/apt/lists/*
+
+# Match host Docker group GID (Docker Desktop on Mac uses 999)
+RUN groupmod -o -g 999 docker && usermod -aG docker jenkins
+
+USER jenkins
