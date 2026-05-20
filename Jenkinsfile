@@ -23,10 +23,7 @@ pipeline {
         }
         stage('API Smoke Tests') {
             steps {
-                sh 'newman run scripts/bigrun-coach.postman_collection.json \
-                    --env-var baseUrl=http://localhost:8081 \
-                    --reporters cli,junit \
-                    --reporter-junit-export target/newman/results.xml'
+                sh """newman run scripts/bigrun-coach.postman_collection.json --env-var baseUrl=http://localhost:8081 --reporters cli,junit --reporter-junit-export target/newman/results.xml"""
             }
         }
     }
