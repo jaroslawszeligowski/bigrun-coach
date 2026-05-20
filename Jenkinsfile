@@ -16,6 +16,12 @@ pipeline {
             steps { sh 'docker build -f Dockerfile.ci -t bigrun-coach .' }
         }
         stage('Deploy') {
+            environment {
+                DB_NAME = credentials('db-name')
+                DB_USERNAME = credentials('db-username')
+                DB_PASSWORD = credentials('db-password')
+                OLLAMA_BASE_URL = credentials('ollama-base-url')
+            }
             steps {
                 sh 'docker-compose down'
                 sh 'docker-compose up -d'

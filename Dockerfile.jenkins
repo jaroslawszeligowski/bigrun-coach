@@ -2,7 +2,5 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Install docker CLI and git
-RUN apt-get update && apt-get install -y docker.io git && rm -rf /var/lib/apt/lists/*
-
-USER root
+# Install docker CLI, docker-compose and git
+RUN apt-get update && apt-get install -y docker.io docker-compose git && rm -rf /var/lib/apt/lists/*
