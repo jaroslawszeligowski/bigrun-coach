@@ -284,7 +284,7 @@
             "method": "POST",
             "url": "{{baseUrl}}/api/v1/chat",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\"message\": \"Give me a pizza recipe\", \"model\": \"fast\"}" }
+            "body": { "mode": "raw", "raw": "{\"message\": \"Give me a pizza recipe\", \"model\": \"smart\"}" }
           },
           "event": [
             {
