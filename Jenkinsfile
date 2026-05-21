@@ -10,7 +10,7 @@ pipeline {
             steps { sh 'mvn test' }
         }
         stage('Integration Tests') {
-            steps { sh 'mvn verify -P integration-tests' }
+            steps { sh 'mvn verify -P integration-tests -Dskip.surefire.tests=true' }
         }
         stage('Docker Build') {
             steps { sh 'docker build -f Dockerfile.ci -t bigrun-coach .' }
@@ -45,8 +45,9 @@ EOF
     }
     post {
         always {
-            junit '**/target/surefire-reports/*.xml'
-            junit '**/target/failsafe-reports/*.xml'
+            junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
+            junit testResults: '**/target/failsafe-reports/*.xml', allowEmptyResults: true
+            junit testResults: '**/target/newman/results.xml', allowEmptyResults: true
         }
         failure {
             echo 'Pipeline failed — check logs'
