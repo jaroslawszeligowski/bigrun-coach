@@ -16,17 +16,24 @@ pipeline {
             steps { sh 'docker build -f Dockerfile.ci -t bigrun-coach .' }
         }
         stage('Deploy') {
-            environment {
-                DB_NAME = credentials('db-name')
-                DB_USERNAME = credentials('db-username')
-                DB_PASSWORD = credentials('db-password')
-                OLLAMA_BASE_URL = credentials('ollama-base-url')
-            }
             steps {
-//                 sh 'printf "DB_NAME=%s\nDB_USERNAME=%s\nDB_PASSWORD=%s\nOLLAMA_BASE_URL=%s\n" "$DB_NAME" "$DB_USERNAME" "$DB_PASSWORD" "$OLLAMA_BASE_URL" > .env'
-                sh 'touch .env'
-                sh 'docker-compose down'
-                sh 'docker-compose up -d'
+                withCredentials([
+                    string(credentialsId: 'db-name', variable: 'DB_NAME'),
+                    string(credentialsId: 'db-username', variable: 'DB_USERNAME'),
+                    string(credentialsId: 'db-password', variable: 'DB_PASSWORD'),
+                    string(credentialsId: 'ollama-base-url', variable: 'OLLAMA_BASE_URL')
+                ]) {
+                    sh '''
+                        cat <<EOF > .env
+DB_NAME=${DB_NAME}
+DB_USERNAME=${DB_USERNAME}
+DB_PASSWORD=${DB_PASSWORD}
+OLLAMA_BASE_URL=${OLLAMA_BASE_URL}
+EOF
+                        docker-compose down
+                        docker-compose up -d
+                    '''
+                }
             }
         }
         stage('API Smoke Tests') {
