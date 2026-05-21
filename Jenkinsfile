@@ -38,6 +38,7 @@ EOF
         }
         stage('API Smoke Tests') {
             steps {
+                sh 'sleep 10'
                 sh """newman run scripts/bigrun-coach.postman_collection.json --env-var baseUrl=http://host.docker.internal:8081 --reporters cli,junit --reporter-junit-export target/newman/results.xml"""
             }
         }
