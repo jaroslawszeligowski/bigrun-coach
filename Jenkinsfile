@@ -48,6 +48,7 @@ EOF
             junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true
             junit testResults: '**/target/failsafe-reports/*.xml', allowEmptyResults: true
             junit testResults: '**/target/newman/results.xml', allowEmptyResults: true
+            allure includeProperties: false, results: [[path: 'target/allure-results']]
         }
         failure {
             echo 'Pipeline failed — check logs'
