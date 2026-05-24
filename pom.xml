@@ -103,6 +103,13 @@
             <version>4.2.1</version>
             <scope>test</scope>
         </dependency>
+        <!-- Allure — test reporting -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>2.27.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -130,6 +137,12 @@
 
     <build>
         <plugins>
+            <!-- Allure Maven Plugin — generuje raport HTML z target/allure-results -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.12.0</version>
+            </plugin>
             <!-- Tworzy gotowy do uruchomienia w Dockerze plik .jar i wyklucza z niego Lomboka -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>

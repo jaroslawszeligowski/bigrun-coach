@@ -34,3 +34,8 @@ build/
 
 ### Secrets ###
 .env
+
+### Allure Reporting ###
+.allure/
+allure-results/
+allure-report/
