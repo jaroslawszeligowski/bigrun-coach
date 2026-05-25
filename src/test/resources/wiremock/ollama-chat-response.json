@@ -1,0 +1,9 @@
+{
+  "model": "qwen2.5:14b",
+  "message": {
+    "role": "assistant",
+    "content": "Your pace for a 3-hour marathon is 4:16 min/km."
+  },
+  "done": true,
+  "done_reason": "stop"
+}
