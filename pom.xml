@@ -137,6 +137,14 @@
 
     <build>
         <plugins>
+            <!-- Wyklucza testy z @Tag("local") z mvn test — wymagają lokalnej Ollamy -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludedGroups>local</excludedGroups>
+                </configuration>
+            </plugin>
             <!-- Allure Maven Plugin — generuje raport HTML z target/allure-results -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
