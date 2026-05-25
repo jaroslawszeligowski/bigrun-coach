@@ -4,6 +4,6 @@ spring:
       ddl-auto: validate
   ai:
     ollama:
-      base-url: ${OLLAMA_TEST_URL:http://localhost}:${wiremock.server.port:11434}
+      base-url: http://localhost:${wiremock.server.port:11434}
     google.genai.enabled: false
     openai.enabled: false

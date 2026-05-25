@@ -11,7 +11,7 @@ pipeline {
         }
         stage('Integration Tests') {
             steps {
-                withEnv(['OLLAMA_TEST_URL=http://host.docker.internal']) {
+                withEnv(['OLLAMA_BASE_URL=http://host.docker.internal:11434']) {
                     sh 'mvn verify -P integration-tests -Dskip.surefire.tests=true'
                 }
             }
