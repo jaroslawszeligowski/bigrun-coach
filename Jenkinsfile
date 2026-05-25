@@ -49,6 +49,8 @@ EOF
             junit testResults: '**/target/failsafe-reports/*.xml', allowEmptyResults: true
             junit testResults: '**/target/newman/results.xml', allowEmptyResults: true
             allure includeProperties: false, results: [[path: 'target/allure-results']]
+            sh 'rm -f .env'
+            sh 'docker system prune -f'
         }
         failure {
             echo 'Pipeline failed — check logs'

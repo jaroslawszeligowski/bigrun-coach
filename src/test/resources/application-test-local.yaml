@@ -1,4 +1,0 @@
-spring:
-  ai:
-    ollama:
-      base-url: http://host.docker.internal:11434
