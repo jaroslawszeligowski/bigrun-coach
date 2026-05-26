@@ -6,7 +6,7 @@
  * Integration tests for RagService using a real Ollama (nomic-embed-text)
  * and a real pgvector instance via Testcontainers. Verifies that semantic
  * similarity search returns relevant documents for given queries.
- * Run locally with: mvn test -Dgroups=local
+ * Run in nightly pipeline: mvn verify -P rag-tests
  * ------------------------------------------------------------------------
  *
  * @author bigrun
@@ -17,6 +17,7 @@
 package pl.bigrun.bigruncoach.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -38,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test-local")
 @Testcontainers
+@Tag("rag")
 class RagServiceIT {
 
     @Container

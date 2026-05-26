@@ -113,7 +113,7 @@
     </dependencies>
 
     <profiles>
-        <!-- Profil do uruchamiania testów integracyjnych w Jenkinsie (*IT.java) -->
+        <!-- Daily CI: wszystkie *IT.java oprócz @Tag("rag") — bez real Ollamy -->
         <profile>
             <id>integration-tests</id>
             <build>
@@ -121,6 +121,32 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <excludedGroups>rag</excludedGroups>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- Nightly: tylko @Tag("rag") — wymaga działającej Ollamy -->
+        <profile>
+            <id>rag-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <groups>rag</groups>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>

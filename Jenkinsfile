@@ -10,11 +10,7 @@ pipeline {
             steps { sh 'mvn test' }
         }
         stage('Integration Tests') {
-            steps {
-                withEnv(['OLLAMA_BASE_URL=http://host.docker.internal:11434']) {
-                    sh 'mvn verify -P integration-tests -Dskip.surefire.tests=true'
-                }
-            }
+            steps { sh 'mvn verify -P integration-tests -Dskip.surefire.tests=true' }
         }
         stage('Docker Build') {
             steps { sh 'docker build -f Dockerfile.ci -t bigrun-coach .' }
