@@ -50,6 +50,7 @@ EOF
             junit testResults: '**/target/newman/results.xml', allowEmptyResults: true
             allure includeProperties: false, results: [[path: 'target/allure-results']]
             sh 'rm -f .env'
+            sh 'docker-compose down'
             sh 'docker system prune -f'
         }
         failure {
