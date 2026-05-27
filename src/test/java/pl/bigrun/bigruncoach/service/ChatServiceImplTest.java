@@ -108,4 +108,18 @@ class ChatServiceImplTest {
         verify(requestSpec).options(captor.capture());
         assertThat(captor.getValue().getModel()).isEqualTo("qwen2.5:14b");
     }
+
+    @Test
+    void shouldCallRagServiceWithUserMessage() {
+        chatService.chat("ile wody pić?", null);
+
+        verify(ragService).findRelevantContext("ile wody pić?");
+    }
+
+    @Test
+    void shouldReturnLlmResponse() {
+        String result = chatService.chat("jakie tempo?", null);
+
+        assertThat(result).isEqualTo("mocked response");
+    }
 }
