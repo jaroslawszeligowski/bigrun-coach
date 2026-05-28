@@ -31,14 +31,14 @@ class NutritionToolTest {
 
     @Test
     void shouldRecommendNoMidRunHydrationForShortRun() {
-        String result = tool.calculateHydration(25, 15.0);
+        String result = tool.calculateHydration(25.0, 15.0);
 
         assertThat(result).containsIgnoringCase("sufficient");
     }
 
     @Test
     void shouldRecommendDrinkingIntervalForExtendedRun() {
-        String result = tool.calculateHydration(90, 20.0);
+        String result = tool.calculateHydration(90.0, 20.0);
 
         assertThat(result).contains("15 minutes");
         assertThat(result).contains("ml");
@@ -46,21 +46,21 @@ class NutritionToolTest {
 
     @Test
     void shouldRecommendElectrolytesForLongRun() {
-        String result = tool.calculateHydration(70, 20.0);
+        String result = tool.calculateHydration(70.0, 20.0);
 
         assertThat(result).containsIgnoringCase("electrolytes");
     }
 
     @Test
     void shouldRecommendAidStationsForUltraRun() {
-        String result = tool.calculateHydration(300, 20.0);
+        String result = tool.calculateHydration(300.0, 20.0);
 
         assertThat(result).containsIgnoringCase("aid stations");
     }
 
     @Test
     void shouldReturnErrorWhenHydrationDurationIsZero() {
-        String result = tool.calculateHydration(0, 20.0);
+        String result = tool.calculateHydration(0.0, 20.0);
 
         assertThat(result).containsIgnoringCase("invalid");
     }
@@ -69,28 +69,28 @@ class NutritionToolTest {
 
     @Test
     void shouldTreatThirtyMinutesAsShortRun() {
-        String result = tool.calculateHydration(30, 15.0);
+        String result = tool.calculateHydration(30.0, 15.0);
 
         assertThat(result).containsIgnoringCase("sufficient");
     }
 
     @Test
     void shouldTreatThirtyOneMinutesAsMediumRun() {
-        String result = tool.calculateHydration(31, 15.0);
+        String result = tool.calculateHydration(31.0, 15.0);
 
         assertThat(result).contains("15 minutes");
     }
 
     @Test
     void shouldTreatSixtyMinutesAsLongRun() {
-        String result = tool.calculateHydration(60, 20.0);
+        String result = tool.calculateHydration(60.0, 20.0);
 
         assertThat(result).containsIgnoringCase("electrolytes");
     }
 
     @Test
     void shouldTreatTwoHundredFortyMinutesAsUltra() {
-        String result = tool.calculateHydration(240, 20.0);
+        String result = tool.calculateHydration(240.0, 20.0);
 
         assertThat(result).containsIgnoringCase("aid stations");
     }
@@ -99,24 +99,24 @@ class NutritionToolTest {
 
     @Test
     void shouldIncreaseFluidIntakeForHighTemperature() {
-        String resultCool = tool.calculateHydration(60, 10.0);
-        String resultHot  = tool.calculateHydration(60, 30.0);
+        String resultCool = tool.calculateHydration(60.0, 10.0);
+        String resultHot  = tool.calculateHydration(60.0, 30.0);
 
         assertThat(extractTotalMl(resultHot)).isGreaterThan(extractTotalMl(resultCool));
     }
 
     @Test
     void shouldReduceFluidIntakeInColdWeather() {
-        String resultFreezing  = tool.calculateHydration(60, -5.0);
-        String resultTemperate = tool.calculateHydration(60, 15.0);
+        String resultFreezing  = tool.calculateHydration(60.0, -5.0);
+        String resultTemperate = tool.calculateHydration(60.0, 15.0);
 
         assertThat(extractTotalMl(resultFreezing)).isLessThan(extractTotalMl(resultTemperate));
     }
 
     @Test
     void shouldReduceFluidIntakeInCoolWeather() {
-        String resultCool      = tool.calculateHydration(60, 5.0);
-        String resultTemperate = tool.calculateHydration(60, 15.0);
+        String resultCool      = tool.calculateHydration(60.0, 5.0);
+        String resultTemperate = tool.calculateHydration(60.0, 15.0);
 
         assertThat(extractTotalMl(resultCool)).isLessThan(extractTotalMl(resultTemperate));
     }
@@ -125,14 +125,14 @@ class NutritionToolTest {
 
     @Test
     void shouldRecommendNoCarbohydratesForRunUnderSixtyMinutes() {
-        String result = tool.calculateCarbohydrates(45);
+        String result = tool.calculateCarbohydrates(45.0);
 
         assertThat(result).containsIgnoringCase("no carbohydrates");
     }
 
     @Test
     void shouldRecommendOneGelForLongRun() {
-        String result = tool.calculateCarbohydrates(75);
+        String result = tool.calculateCarbohydrates(75.0);
 
         assertThat(result).contains("gel");
     }
@@ -140,7 +140,7 @@ class NutritionToolTest {
     @Test
     void shouldCalculateTotalCarbsForExtendedRun() {
         // 3h run → 180g carbs → 7 gels
-        String result = tool.calculateCarbohydrates(180);
+        String result = tool.calculateCarbohydrates(180.0);
 
         assertThat(result).contains("180g");
         assertThat(result).contains("gel");
@@ -148,14 +148,14 @@ class NutritionToolTest {
 
     @Test
     void shouldRecommendSolidFoodForUltraRun() {
-        String result = tool.calculateCarbohydrates(300);
+        String result = tool.calculateCarbohydrates(300.0);
 
         assertThat(result).containsIgnoringCase("solid food");
     }
 
     @Test
     void shouldReturnErrorWhenCarbohydrateDurationIsZero() {
-        String result = tool.calculateCarbohydrates(0);
+        String result = tool.calculateCarbohydrates(0.0);
 
         assertThat(result).containsIgnoringCase("invalid");
     }
@@ -164,21 +164,21 @@ class NutritionToolTest {
 
     @Test
     void shouldTreatFiftyNineMinutesAsMedium() {
-        String result = tool.calculateCarbohydrates(59);
+        String result = tool.calculateCarbohydrates(59.0);
 
         assertThat(result).containsIgnoringCase("no carbohydrates");
     }
 
     @Test
     void shouldTreatSixtyMinutesAsLongRunForCarbs() {
-        String result = tool.calculateCarbohydrates(60);
+        String result = tool.calculateCarbohydrates(60.0);
 
         assertThat(result).contains("gel");
     }
 
     @Test
     void shouldTreatNinetyMinutesAsExtended() {
-        String result = tool.calculateCarbohydrates(90);
+        String result = tool.calculateCarbohydrates(90.0);
 
         assertThat(result).containsIgnoringCase("gels");
         assertThat(result).doesNotContainIgnoringCase("no carbohydrates");
@@ -186,7 +186,7 @@ class NutritionToolTest {
 
     @Test
     void shouldTreatTwoHundredFortyMinutesAsUltraForCarbs() {
-        String result = tool.calculateCarbohydrates(240);
+        String result = tool.calculateCarbohydrates(240.0);
 
         assertThat(result).containsIgnoringCase("solid food");
     }
