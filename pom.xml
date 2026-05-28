@@ -175,6 +175,54 @@
                 <artifactId>allure-maven</artifactId>
                 <version>2.12.0</version>
             </plugin>
+            <!-- JaCoCo — pokrycie kodu testami, raport HTML w target/site/jacoco/index.html -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals><goal>report</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals><goal>check</goal></goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.70</minimum>
+                                        </limit>
+                                        <!-- BRANCH: weryfikuje pokrycie ścieżek if/else/switch.
+                                             Ostrzejszy miernik niż LINE — włączyć po ustabilizowaniu projektu.
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.60</minimum>
+                                        </limit>
+                                        -->
+                                    </limits>
+                                </rule>
+                            </rules>
+                            <excludes>
+                                <exclude>**/config/**</exclude>
+                                <exclude>**/dto/**</exclude>
+                                <exclude>**/*Application*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Tworzy gotowy do uruchomienia w Dockerze plik .jar i wyklucza z niego Lomboka -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>

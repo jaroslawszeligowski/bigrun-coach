@@ -57,6 +57,10 @@ EOF
             junit testResults: '**/target/failsafe-reports/*.xml', allowEmptyResults: true
             junit testResults: '**/target/newman/results.xml', allowEmptyResults: true
             allure includeProperties: false, results: [[path: 'target/allure-results']]
+            recordCoverage(
+                tools: [[parser: 'JACOCO', pattern: '**/target/jacoco.exec, **/target/jacoco-it.exec']],
+                sourceCodeRetention: 'EVERY_BUILD'
+            )
             sh 'docker-compose down'
             sh 'rm -f .env'
             sh 'docker system prune -f'
