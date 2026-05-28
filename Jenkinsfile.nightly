@@ -43,10 +43,10 @@ EOF
                 sh """newman run scripts/bigrun-coach.postman_collection.json --env-var baseUrl=http://host.docker.internal:8081 --reporters cli,junit --reporter-junit-export target/newman/results.xml"""
             }
         }
-        stage('RAG Tests') {
+        stage('Live AI Tests') {
             steps {
                 withEnv(['OLLAMA_BASE_URL=http://host.docker.internal:11434']) {
-                    sh 'mvn verify -P rag-tests -Dskip.surefire.tests=true'
+                    sh 'mvn verify -P live-ai -Dskip.surefire.tests=true'
                 }
             }
         }

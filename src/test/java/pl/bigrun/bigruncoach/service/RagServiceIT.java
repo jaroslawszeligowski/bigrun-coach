@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @ActiveProfiles("test-local")
 @Testcontainers
-@Tag("rag")
+@Tag("live-ai")
 class RagServiceIT {
 
     @Container

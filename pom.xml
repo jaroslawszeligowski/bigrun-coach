@@ -103,6 +103,12 @@
             <version>4.2.1</version>
             <scope>test</scope>
         </dependency>
+        <!-- REST Assured — E2E API tests -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- Allure — test reporting -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
@@ -113,7 +119,7 @@
     </dependencies>
 
     <profiles>
-        <!-- Daily CI: wszystkie *IT.java oprócz @Tag("rag") — bez real Ollamy -->
+        <!-- Daily CI: wszystkie *IT.java oprócz @Tag("live-ai") — bez real AI API -->
         <profile>
             <id>integration-tests</id>
             <build>
@@ -122,7 +128,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>rag</excludedGroups>
+                            <excludedGroups>live-ai</excludedGroups>
                         </configuration>
                         <executions>
                             <execution>
@@ -136,16 +142,16 @@
                 </plugins>
             </build>
         </profile>
-        <!-- Nightly: tylko @Tag("rag") — wymaga działającej Ollamy -->
+        <!-- Nightly: tylko @Tag("live-ai") — wymaga działającego AI API (Ollama/Gemini/OpenAI) -->
         <profile>
-            <id>rag-tests</id>
+            <id>live-ai</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <groups>rag</groups>
+                            <groups>live-ai</groups>
                         </configuration>
                         <executions>
                             <execution>
