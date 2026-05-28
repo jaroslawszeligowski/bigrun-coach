@@ -55,13 +55,13 @@ public class NutritionTool {
         if (tempCelsius == null || isInvalidTemperature(tempCelsius)) {
             return "Invalid input: temperature must be a valid number above absolute zero (-273°C).";
         }
-        RunDurationCategory category  = RunDurationCategory.fromDuration((int) durationMinutes);
+        RunDurationCategory category  = RunDurationCategory.fromDuration(durationMinutes.intValue());
         double fluidRateMlPerHour     = fluidRateFor(tempCelsius);
         double totalMl                = fluidRateMlPerHour * (durationMinutes / MINUTES_PER_HOUR);
-        int    portions               = (int) durationMinutes / DRINKING_INTERVAL_MINUTES;
+        int    portions               = durationMinutes.intValue() / DRINKING_INTERVAL_MINUTES;
         double mlPerPortion           = portions > 0 ? totalMl / portions : 0;
 
-        return formatter.formatHydrationPlan((int) durationMinutes, tempCelsius, totalMl, category,
+        return formatter.formatHydrationPlan(durationMinutes.intValue(), tempCelsius, totalMl, category,
                 DRINKING_INTERVAL_MINUTES, mlPerPortion);
     }
 
@@ -74,11 +74,11 @@ public class NutritionTool {
         if (durationMinutes == null || durationMinutes <= 0) {
             return "Invalid input: duration must be positive.";
         }
-        RunDurationCategory category = RunDurationCategory.fromDuration((int) durationMinutes);
+        RunDurationCategory category = RunDurationCategory.fromDuration(durationMinutes.intValue());
         int totalCarbs = (int) ((durationMinutes / MINUTES_PER_HOUR) * CARBS_GRAMS_PER_HOUR);
         int gels       = totalCarbs / CARBS_PER_GEL_GRAMS;
 
-        return formatter.formatCarbPlan((int) durationMinutes, category, totalCarbs, gels);
+        return formatter.formatCarbPlan(durationMinutes.intValue(), category, totalCarbs, gels);
     }
 
     double fluidRateFor(Double tempCelsius) {
