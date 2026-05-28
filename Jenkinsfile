@@ -50,7 +50,7 @@ EOF
             junit testResults: '**/target/newman/results.xml', allowEmptyResults: true
             allure includeProperties: false, results: [[path: 'target/allure-results']]
             recordCoverage(
-                tools: [[parser: 'JACOCO', pattern: '**/target/jacoco.exec, **/target/jacoco-it.exec']],
+                tools: [[parser: 'JACOCO', pattern: '**/target/site/jacoco/jacoco.xml']],
                 sourceCodeRetention: 'EVERY_BUILD'
             )
             sh 'docker-compose down'
