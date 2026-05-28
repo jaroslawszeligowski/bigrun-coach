@@ -47,12 +47,12 @@ public class NutritionTool {
             "tempCelsius (e.g. -5 for frost, 5 for cold, 15 for mild, 25 for warm, 35 for hot). " +
             "Accounts for cold weather (reduced intake) and hot weather (increased intake). " +
             "Use this when user asks about hydration, drinking, water intake, or fluids during running.")
-    public String calculateHydration(double durationMinutes, double tempCelsius) {
+    public String calculateHydration(Double durationMinutes, Double tempCelsius) {
         log.info(">>> TOOL CALLED: calculateHydration({}, {})", durationMinutes, tempCelsius);
-        if (durationMinutes <= 0) {
+        if (durationMinutes == null || durationMinutes <= 0) {
             return "Invalid input: duration must be positive.";
         }
-        if (isInvalidTemperature(tempCelsius)) {
+        if (tempCelsius == null || isInvalidTemperature(tempCelsius)) {
             return "Invalid input: temperature must be a valid number above absolute zero (-273°C).";
         }
         RunDurationCategory category  = RunDurationCategory.fromDuration((int) durationMinutes);
@@ -69,9 +69,9 @@ public class NutritionTool {
             "Parameters: durationMinutes (e.g. 45 for short run, 90 for long run, 180 for 3h, 300 for 5h ultra). " +
             "Returns total grams and number of energy gels needed. " +
             "Use this when user asks about nutrition, carbs, gels, energy, or fueling during running.")
-    public String calculateCarbohydrates(double durationMinutes) {
+    public String calculateCarbohydrates(Double durationMinutes) {
         log.info(">>> TOOL CALLED: calculateCarbohydrates({})", durationMinutes);
-        if (durationMinutes <= 0) {
+        if (durationMinutes == null || durationMinutes <= 0) {
             return "Invalid input: duration must be positive.";
         }
         RunDurationCategory category = RunDurationCategory.fromDuration((int) durationMinutes);
@@ -81,14 +81,14 @@ public class NutritionTool {
         return formatter.formatCarbPlan((int) durationMinutes, category, totalCarbs, gels);
     }
 
-    double fluidRateFor(double tempCelsius) {
+    double fluidRateFor(Double tempCelsius) {
         if (tempCelsius < COLD_THRESHOLD_CELSIUS) return COLD_FLUID_ML_PER_HOUR;
         if (tempCelsius < COOL_THRESHOLD_CELSIUS) return COOL_FLUID_ML_PER_HOUR;
         if (tempCelsius <= HEAT_THRESHOLD_CELSIUS) return BASE_FLUID_ML_PER_HOUR;
         return BASE_FLUID_ML_PER_HOUR + (tempCelsius - HEAT_THRESHOLD_CELSIUS) * HEAT_FLUID_ML_PER_DEGREE;
     }
 
-    private boolean isInvalidTemperature(double tempCelsius) {
+    private boolean isInvalidTemperature(Double tempCelsius) {
         return Double.isNaN(tempCelsius) || Double.isInfinite(tempCelsius) || tempCelsius < -273;
     }
 }
