@@ -30,6 +30,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Cucumber BOM — zarządza wersjami wszystkich modułów Cucumber -->
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>7.18.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -74,6 +82,35 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!-- Cucumber BDD — wersje zarządzane przez cucumber-bom -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Allure + Cucumber -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-cucumber7-jvm</artifactId>
+            <version>2.27.0</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Test Starters -->
@@ -142,6 +179,39 @@
                 </plugins>
             </build>
         </profile>
+        <!-- BDD: Cucumber — scenariusze walidacji ChatValidationIT w Gherkin -->
+        <profile>
+            <id>cucumber</id>
+            <build>
+                <plugins>
+                    <!-- Surefire pomijany — unit testy uruchamiane osobno przez mvn test -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>**/CucumberSuite.java</include>
+                            </includes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <!-- Nightly: tylko @Tag("live-ai") — wymaga działającego AI API (Ollama/Gemini/OpenAI) -->
         <profile>
             <id>live-ai</id>
@@ -169,6 +239,17 @@
 
     <build>
         <plugins>
+            <!-- Wyklucza Cucumber engine z Surefire — scenariusze .feature uruchamiane wyłącznie
+                 przez Failsafe w profilu cucumber. Bez tego Surefire krasuje przy mvn clean install. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludedEngines>
+                        <excludedEngine>cucumber</excludedEngine>
+                    </excludedEngines>
+                </configuration>
+            </plugin>
             <!-- Allure Maven Plugin — generuje raport HTML z target/allure-results -->
             <plugin>
                 <groupId>io.qameta.allure</groupId>
