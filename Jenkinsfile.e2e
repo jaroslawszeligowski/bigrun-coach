@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    tools { maven 'Maven 3.9' }
+
+    stages {
+        stage('E2E Grid Start') {
+            steps {
+                dir('../bigrun-coach-se') {
+                    sh 'docker-compose up -d'
+                    sh 'sleep 10'
+                }
+            }
+        }
+        stage('E2E Tests') {
+            parallel {
+                stage('E2E Chrome') {
+                    steps {
+                        dir('../bigrun-coach-se') {
+                            sh 'mvn test -Dbrowser=chrome -Dgrid.url=http://localhost:4444 -Dbase.url=http://host.docker.internal:5173'
+                        }
+                    }
+                }
+                stage('E2E Firefox') {
+                    steps {
+                        dir('../bigrun-coach-se') {
+                            sh 'mvn test -Dbrowser=firefox -Dgrid.url=http://localhost:4444 -Dbase.url=http://host.docker.internal:5173'
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            junit testResults: '../bigrun-coach-se/target/surefire-reports/*.xml', allowEmptyResults: true
+            dir('../bigrun-coach-se') {
+                sh 'docker-compose down'
+            }
+        }
+        failure {
+            echo 'E2E pipeline failed — check logs'
+        }
+    }
+}
