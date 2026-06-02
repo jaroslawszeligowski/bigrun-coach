@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  background-color: #f5f4f0;
+  color: #1a1a1a;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+}
+
+/* Runner animation */
+@keyframes run {
+  0%   { transform: translateY(0px); }
+  25%  { transform: translateY(-3px); }
+  50%  { transform: translateY(0px); }
+  75%  { transform: translateY(-1px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes dash {
+  0%   { opacity: 0; transform: translateX(0px); }
+  50%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-10px); }
+}
+
+.runner { display: inline-flex; align-items: center; gap: 3px; }
+.runner-emoji { font-size: 14px; animation: run 0.5s ease-in-out infinite; display: inline-block; }
+.runner-dash { display: inline-block; width: 5px; height: 1px; background: #fc4c02; border-radius: 1px; animation: dash 0.5s ease-in-out infinite; }
+.runner-dash:nth-child(2) { animation-delay: 0.1s; }
+.runner-dash:nth-child(3) { animation-delay: 0.2s; }
+
+/* Mountain Runner animation */
+.mountain-runner-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mountain-runner-scene {
+  position: relative;
+  width: 160px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.mountain-scroll {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  display: flex;
+  animation: mountainScroll 3s linear infinite;
+  width: 600px;
+}
+
+@keyframes mountainScroll {
+  0%   { transform: translateX(-300px); }
+  100% { transform: translateX(0); }
+}
+
+.mountain-ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 0 0 4px 4px;
+}
+
+.mountain-runner-figure {
+  position: absolute;
+  bottom: 7px;
+  left: 24px;
+  animation: runnerBounce 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes runnerBounce {
+  0%   { transform: translateY(0px) rotate(-3deg); }
+  100% { transform: translateY(-4px) rotate(3deg); }
+}
+
+.mountain-runner-label {
+  color: #aaa;
+  font-size: 10px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar       { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d0cec8; border-radius: 2px; }
+
+textarea:focus { outline: none; }
