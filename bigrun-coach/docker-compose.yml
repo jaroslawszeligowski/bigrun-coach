@@ -28,3 +28,10 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       SPRING_AI_OLLAMA_BASE_URL: http://host.docker.internal:11434
+
+  frontend:
+    build: ../bigrun-coach-ui
+    ports:
+      - "80:80"
+    depends_on:
+      - app

@@ -55,7 +55,7 @@ DB_PASSWORD=${DB_PASSWORD}
 OLLAMA_BASE_URL=${OLLAMA_BASE_URL}
 EOF
                             docker-compose down
-                            docker-compose up -d
+                            docker-compose up -d --build
                         '''
                     }
                 }
