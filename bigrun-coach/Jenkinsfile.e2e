@@ -40,14 +40,14 @@ EOF
                 stage('E2E Chrome') {
                     steps {
                         dir('bigrun-coach-se') {
-                            sh 'mvn test -Dbrowser=chrome -Dgrid.url=http://localhost:4444 -Dbase.url=http://host.docker.internal:80'
+                            sh 'mvn test -Dbrowser=chrome -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
                         }
                     }
                 }
                 stage('E2E Firefox') {
                     steps {
                         dir('bigrun-coach-se') {
-                            sh 'mvn test -Dbrowser=firefox -Dgrid.url=http://localhost:4444 -Dbase.url=http://host.docker.internal:80'
+                            sh 'mvn test -Dbrowser=firefox -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
                         }
                     }
                 }
