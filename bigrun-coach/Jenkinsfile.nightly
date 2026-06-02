@@ -81,7 +81,7 @@ EOF
         }
         stage('Trigger E2E') {
             steps {
-                build job: 'bigrun-coach-e2e', wait: true
+                build job: 'bigrun-coach-e2e', wait: false
             }
         }
     }

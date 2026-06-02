@@ -3,6 +3,30 @@ pipeline {
     tools { maven 'Maven 3.9' }
 
     stages {
+        stage('Stack Start') {
+            steps {
+                dir('bigrun-coach') {
+                    withCredentials([
+                        string(credentialsId: 'db-name', variable: 'DB_NAME'),
+                        string(credentialsId: 'db-username', variable: 'DB_USERNAME'),
+                        string(credentialsId: 'db-password', variable: 'DB_PASSWORD'),
+                        string(credentialsId: 'ollama-base-url', variable: 'OLLAMA_BASE_URL')
+                    ]) {
+                        sh '''
+                            cat <<EOF > .env
+DB_NAME=${DB_NAME}
+DB_USERNAME=${DB_USERNAME}
+DB_PASSWORD=${DB_PASSWORD}
+OLLAMA_BASE_URL=${OLLAMA_BASE_URL}
+EOF
+                            docker-compose down
+                            docker-compose up -d --build
+                        '''
+                    }
+                    sh 'sleep 20'
+                }
+            }
+        }
         stage('E2E Grid Start') {
             steps {
                 dir('bigrun-coach-se') {
@@ -35,6 +59,10 @@ pipeline {
             junit testResults: 'bigrun-coach-se/target/surefire-reports/*.xml', allowEmptyResults: true
             dir('bigrun-coach-se') {
                 sh 'docker-compose down'
+            }
+            dir('bigrun-coach') {
+                sh 'docker-compose down'
+                sh 'rm -f .env'
             }
         }
         failure {
