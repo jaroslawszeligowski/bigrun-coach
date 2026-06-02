@@ -57,6 +57,7 @@ EOF
     post {
         always {
             junit testResults: 'bigrun-coach-se/target/surefire-reports/*.xml', allowEmptyResults: true
+            allure includeProperties: false, results: [[path: 'bigrun-coach-se/target/allure-results']]
             dir('bigrun-coach-se') {
                 sh 'docker-compose down'
             }
