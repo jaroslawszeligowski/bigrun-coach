@@ -16,5 +16,6 @@ package pl.bigrun.bigruncoach.dto;
 public record ConfigResponse(
         String provider,
         String smartModel,
-        String fastModel
+        String fastModel,
+        String bielikModel
 ) {}

@@ -5,6 +5,7 @@ app:
   models:
     smart: ${OLLAMA_SMART_MODEL:qwen2.5:14b}
     fast: ${OLLAMA_FAST_MODEL:llama3.2:3b}
+    bielik: ${OLLAMA_BIELIK_MODEL:SpeakLeash/bielik-11b-v3.0-instruct:Q4_K_M}
     gemini: ${GEMINI_CHAT_MODEL:gemini-2.0-flash}
     openai: ${OPENAI_CHAT_MODEL:gpt-4o-mini}
 

@@ -16,5 +16,6 @@ export interface ConfigResponse {
   provider: string;
   smartModel: string;
   fastModel: string;
+  bielikModel: string | null;
 }
 

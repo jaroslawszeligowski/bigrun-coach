@@ -43,17 +43,25 @@ public class ChatServiceImpl implements ChatService {
     @Value("classpath:prompt-template.st")
     private Resource templateResource;
 
-    @Value("${app.models.smart}")
+    @Value("${OLLAMA_SMART_MODEL:qwen2.5:14b}")
     private String smartModel;
 
-    @Value("${app.models.fast}")
+    @Value("${OLLAMA_FAST_MODEL:llama3.2:3b}")
     private String fastModel;
+
+    @Value("${OLLAMA_BIELIK_MODEL:SpeakLeash/bielik-11b-v3.0-instruct:Q4_K_M}")
+    private String bielikModel;
 
     public String chat(String message, String model) {
         String context = ragService.findRelevantContext(message);
         log.debug("RAG context length: {} chars", context.length());
 
-        String selectedModel = "fast".equalsIgnoreCase(model) ? fastModel : smartModel;
+        String selectedModel = switch (model == null ? "" : model.toLowerCase()) {
+            case "fast"   -> fastModel;
+            case "bielik" -> bielikModel;
+            default       -> smartModel;
+        };
+
         log.info("Using model: {}", selectedModel);
 
         Prompt prompt = new PromptTemplate(templateResource)

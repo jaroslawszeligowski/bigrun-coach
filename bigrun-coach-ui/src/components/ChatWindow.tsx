@@ -12,7 +12,7 @@ export default function ChatWindow({ endpoint, config }: Props) {
   const [response, setResponse] = useState('');
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
-  const [model, setModel]       = useState<'smart' | 'fast'>('smart');
+  const [model, setModel]       = useState<'smart' | 'fast' | 'bielik'>('smart');
   const responseRef              = useRef<HTMLDivElement>(null);
   const textareaRef              = useRef<HTMLTextAreaElement>(null);
 
@@ -140,6 +140,7 @@ export default function ChatWindow({ endpoint, config }: Props) {
               {([
                 { key: 'smart' as const, label: 'smart', modelName: config?.smartModel ?? '...' },
                 ...(config?.provider === 'ollama' ? [{ key: 'fast' as const, label: 'fast', modelName: config.fastModel }] : []),
+                ...(config?.bielikModel ? [{ key: 'bielik' as const, label: 'bielik', modelName: config.bielikModel }] : []),
               ]).map(({ key, label, modelName }) => (
                 <button
                   key={key}

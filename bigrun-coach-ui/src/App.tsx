@@ -19,9 +19,10 @@ export default function App() {
   const modelRows = config ? [
     ...(config.provider === 'ollama'
       ? [
-          { mode: 'smart', model: config.smartModel, note: 'RAG + tools' },
-          { mode: 'fast',  model: config.fastModel,  note: 'RAG + tools' },
-          { mode: 'embed', model: 'nomic-embed-text', note: 'vectors' },
+          { mode: 'smart',  model: config.smartModel,   note: 'RAG + tools' },
+          { mode: 'fast',   model: config.fastModel,    note: 'RAG + tools' },
+          ...(config.bielikModel ? [{ mode: 'bielik', model: config.bielikModel, note: 'RAG + tools' }] : []),
+          { mode: 'embed',  model: 'nomic-embed-text',  note: 'vectors' },
         ]
       : config.provider === 'gemini'
       ? [
