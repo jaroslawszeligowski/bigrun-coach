@@ -51,12 +51,12 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public ConfigResponse getActiveConfig() {
-        if (openaiEnabled) {
-            return new ConfigResponse("openai", openaiModel, openaiModel, openaiModel);
+        if (ollamaEnabled) {
+            return new ConfigResponse("ollama", smartModel, fastModel, bielikModel);
         }
         if (geminiEnabled) {
-            return new ConfigResponse("gemini", geminiModel, geminiModel, geminiModel);
+            return new ConfigResponse("gemini", geminiModel, null, null);
         }
-        return new ConfigResponse("ollama", smartModel, fastModel, bielikModel);
+        return new ConfigResponse("openai", openaiModel, null, null);
     }
 }
