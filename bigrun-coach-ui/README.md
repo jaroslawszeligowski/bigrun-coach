@@ -1,73 +1,40 @@
-# React + TypeScript + Vite
+# bigrun-coach-ui — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + TypeScript + Vite + Tailwind CSS frontend for BigRun Coach.
+See the [root README](../README.md) for architecture overview and Quick Start.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev       # dev server at http://localhost:5173 (hot reload)
+npm run build     # type check (tsc) + production build → dist/
+npm run lint      # ESLint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+API calls are proxied to backend at `http://localhost:8081` via Vite proxy config.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Docker
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Multi-stage build: Node 22 (build) → nginx Alpine (runtime, port 80).
+
+```bash
+docker build -t bigrun-coach-ui .
 ```
+
+![BigRun Coach UI](../docs/images/bigrun-coach%20ui%20chat.png)
+
+## Components
+
+| Component | Purpose |
+|-----------|---------|
+| `App.tsx` | layout — left sidebar (models, RAG info, stack), fetches `/api/v1/config` on load |
+| `ChatWindow.tsx` | main chat UI — model selector (smart/fast/bielik), textarea, response display |
+| `MountainRunner.tsx` | branding visual |
+| `types.ts` | `ChatRequest`, `ChatResponse`, `ConfigResponse` |
+
+## Model selector behaviour
+
+- `smart` / `fast` — visible only when provider = Ollama
+- `bielik` — visible only when `config.bielikModel != null` (Ollama only, hidden for Gemini/OpenAI)
+- Model names displayed on buttons come from `/api/v1/config` — no hardcoding in frontend
