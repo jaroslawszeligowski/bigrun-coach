@@ -18,3 +18,7 @@
 ### Private notes ###
 *.md
 CLAUDE.md
+
+### Exceptions ###
+!README.md
+!**/README.md
