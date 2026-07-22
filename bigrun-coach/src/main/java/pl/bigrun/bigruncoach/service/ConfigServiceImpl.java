@@ -31,17 +31,15 @@ public class ConfigServiceImpl implements ConfigService {
     private final String openaiModel;
 
     public ConfigServiceImpl(
-            @Value("${spring.ai.ollama.enabled:true}") boolean ollamaEnabled,
-            @Value("${spring.ai.openai.enabled:false}") boolean openaiEnabled,
-            @Value("${spring.ai.google.genai.enabled:false}") boolean geminiEnabled,
+            @Value("${spring.ai.model.chat:ollama}") String activeProvider,
             @Value("${OLLAMA_SMART_MODEL:qwen2.5:14b}") String smartModel,
             @Value("${OLLAMA_FAST_MODEL:llama3.2:3b}") String fastModel,
             @Value("${OLLAMA_BIELIK_MODEL:SpeakLeash/bielik-11b-v3.0-instruct:Q4_K_M}") String bielikModel,
             @Value("${GEMINI_CHAT_MODEL:gemini-2.0-flash}") String geminiModel,
             @Value("${OPENAI_CHAT_MODEL:gpt-4o-mini}") String openaiModel) {
-        this.ollamaEnabled = ollamaEnabled;
-        this.openaiEnabled = openaiEnabled;
-        this.geminiEnabled = geminiEnabled;
+        this.ollamaEnabled = "ollama".equals(activeProvider);
+        this.openaiEnabled = "openai".equals(activeProvider);
+        this.geminiEnabled = "google-genai".equals(activeProvider);
         this.smartModel = smartModel;
         this.fastModel = fastModel;
         this.bielikModel = bielikModel;

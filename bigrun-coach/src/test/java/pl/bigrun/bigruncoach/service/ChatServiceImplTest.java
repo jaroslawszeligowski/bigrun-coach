@@ -52,6 +52,7 @@ class ChatServiceImplTest {
 
         // @Value nie jest wstrzykiwane przez Mockito — brak Spring contextu.
         // ReflectionTestUtils ustawia prywatne pola przez refleksję Javy.
+        ReflectionTestUtils.setField(chatService, "activeProvider", "ollama");
         ReflectionTestUtils.setField(chatService, "smartModel", "qwen2.5:14b");
         ReflectionTestUtils.setField(chatService, "fastModel", "qwen2.5:7b");
         ReflectionTestUtils.setField(chatService, "templateResource", new ClassPathResource("prompt-template.st"));
@@ -68,45 +69,45 @@ class ChatServiceImplTest {
     void shouldUseSmartModelWhenModelIsNull() {
         chatService.chat("jakie tempo na maraton?", null);
 
-        ArgumentCaptor<OllamaChatOptions> captor = ArgumentCaptor.forClass(OllamaChatOptions.class);
+        ArgumentCaptor<OllamaChatOptions.Builder> captor = ArgumentCaptor.forClass(OllamaChatOptions.Builder.class);
         verify(requestSpec).options(captor.capture());
-        assertThat(captor.getValue().getModel()).isEqualTo("qwen2.5:14b");
+        assertThat(captor.getValue().build().getModel()).isEqualTo("qwen2.5:14b");
     }
 
     @Test
     void shouldUseFastModelWhenModelIsFast() {
         chatService.chat("jakie tempo na maraton?", "fast");
 
-        ArgumentCaptor<OllamaChatOptions> captor = ArgumentCaptor.forClass(OllamaChatOptions.class);
+        ArgumentCaptor<OllamaChatOptions.Builder> captor = ArgumentCaptor.forClass(OllamaChatOptions.Builder.class);
         verify(requestSpec).options(captor.capture());
-        assertThat(captor.getValue().getModel()).isEqualTo("qwen2.5:7b");
+        assertThat(captor.getValue().build().getModel()).isEqualTo("qwen2.5:7b");
     }
 
     @Test
     void shouldUseFastModelWhenModelIsUppercase() {
         chatService.chat("jakie tempo na maraton?", "FAST");
 
-        ArgumentCaptor<OllamaChatOptions> captor = ArgumentCaptor.forClass(OllamaChatOptions.class);
+        ArgumentCaptor<OllamaChatOptions.Builder> captor = ArgumentCaptor.forClass(OllamaChatOptions.Builder.class);
         verify(requestSpec).options(captor.capture());
-        assertThat(captor.getValue().getModel()).isEqualTo("qwen2.5:7b");
+        assertThat(captor.getValue().build().getModel()).isEqualTo("qwen2.5:7b");
     }
 
     @Test
     void shouldUseSmartModelWhenModelIsSmart() {
         chatService.chat("jakie tempo na maraton?", "smart");
 
-        ArgumentCaptor<OllamaChatOptions> captor = ArgumentCaptor.forClass(OllamaChatOptions.class);
+        ArgumentCaptor<OllamaChatOptions.Builder> captor = ArgumentCaptor.forClass(OllamaChatOptions.Builder.class);
         verify(requestSpec).options(captor.capture());
-        assertThat(captor.getValue().getModel()).isEqualTo("qwen2.5:14b");
+        assertThat(captor.getValue().build().getModel()).isEqualTo("qwen2.5:14b");
     }
 
     @Test
     void shouldUseSmartModelForUnknownModelValue() {
         chatService.chat("jakie tempo na maraton?", "unknown");
 
-        ArgumentCaptor<OllamaChatOptions> captor = ArgumentCaptor.forClass(OllamaChatOptions.class);
+        ArgumentCaptor<OllamaChatOptions.Builder> captor = ArgumentCaptor.forClass(OllamaChatOptions.Builder.class);
         verify(requestSpec).options(captor.capture());
-        assertThat(captor.getValue().getModel()).isEqualTo("qwen2.5:14b");
+        assertThat(captor.getValue().build().getModel()).isEqualTo("qwen2.5:14b");
     }
 
     @Test

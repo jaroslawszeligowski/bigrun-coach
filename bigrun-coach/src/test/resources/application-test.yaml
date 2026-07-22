@@ -3,7 +3,8 @@ spring:
     hibernate:
       ddl-auto: validate
   ai:
+    model:
+      chat: ollama
+      embedding: ollama
     ollama:
       base-url: http://localhost:${wiremock.server.port:11434}
-    google.genai.enabled: false
-    openai.enabled: false

@@ -1,6 +1,6 @@
 # bigrun-coach — Backend
 
-Spring Boot 3.5 / Java 21 backend for BigRun Coach.
+Spring Boot 4.1 / Java 21 backend for BigRun Coach.
 See the [root README](../README.md) for architecture overview and Quick Start.
 
 ## Local development
@@ -13,9 +13,17 @@ cp .env.example .env
 
 Fill in DB credentials and choose one AI provider:
 
-**Option 1 — Ollama (local, ~10 GB RAM)**
+**Option 1 — Gemini (default, free, no GPU)**
 ```env
-OLLAMA_ENABLED=true
+AI_PROVIDER=google-genai
+GEMINI_API_KEY=<key from aistudio.google.com>
+GEMINI_CHAT_MODEL=gemini-2.0-flash
+GEMINI_EMBEDDING_MODEL=text-embedding-004
+```
+
+**Option 2 — Ollama (local, ~10 GB RAM)**
+```env
+AI_PROVIDER=ollama
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_SMART_MODEL=qwen2.5:14b
 OLLAMA_FAST_MODEL=llama3.2:3b
@@ -27,19 +35,9 @@ OLLAMA_EMBEDDING_MODEL=nomic-embed-text
 > Model must be pulled first: `ollama pull <model-name>`
 > If a variable is left empty (not absent), the default is ignored and the app will return 500.
 
-**Option 2 — Gemini (free, no GPU)**
-```env
-OLLAMA_ENABLED=false
-GEMINI_ENABLED=true
-GEMINI_API_KEY=<key from aistudio.google.com>
-GEMINI_CHAT_MODEL=gemini-2.0-flash
-GEMINI_EMBEDDING_MODEL=text-embedding-004
-```
-
 **Option 3 — OpenAI (paid)**
 ```env
-OLLAMA_ENABLED=false
-OPENAI_ENABLED=true
+AI_PROVIDER=openai
 OPENAI_API_KEY=<key from platform.openai.com>
 OPENAI_CHAT_MODEL=gpt-4o-mini
 OPENAI_EMBEDDING_MODEL=text-embedding-3-small

@@ -23,12 +23,14 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
   ai:
+    model:
+      chat: ${AI_PROVIDER:ollama}
+      embedding: ${AI_PROVIDER:ollama}
     vectorstore:
       pgvector:
         dimensions: 768
         initialize-schema: false
     ollama:
-      enabled: ${OLLAMA_ENABLED:true}
       base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
       chat:
         options:
@@ -38,16 +40,12 @@ spring:
           model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
     google:
       genai:
-        enabled: ${GEMINI_ENABLED:false}
         api-key: ${GEMINI_API_KEY:not-configured}
         chat:
-          options:
-            model: ${GEMINI_CHAT_MODEL:gemini-2.0-flash}
+          model: ${GEMINI_CHAT_MODEL:gemini-2.0-flash}
         embedding:
-          options:
-            model: ${GEMINI_EMBEDDING_MODEL:text-embedding-004}
+          model: ${GEMINI_EMBEDDING_MODEL:text-embedding-004}
     openai:
-      enabled: ${OPENAI_ENABLED:false}
       api-key: ${OPENAI_API_KEY:not-configured}
       chat:
         options:

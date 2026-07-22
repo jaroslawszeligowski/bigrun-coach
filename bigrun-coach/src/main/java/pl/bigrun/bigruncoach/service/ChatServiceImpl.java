@@ -43,6 +43,9 @@ public class ChatServiceImpl implements ChatService {
     @Value("classpath:prompt-template.st")
     private Resource templateResource;
 
+    @Value("${spring.ai.model.chat:ollama}")
+    private String activeProvider;
+
     @Value("${OLLAMA_SMART_MODEL:qwen2.5:14b}")
     private String smartModel;
 
@@ -56,14 +59,6 @@ public class ChatServiceImpl implements ChatService {
         String context = ragService.findRelevantContext(message);
         log.debug("RAG context length: {} chars", context.length());
 
-        String selectedModel = switch (model == null ? "" : model.toLowerCase()) {
-            case "fast"   -> fastModel;
-            case "bielik" -> bielikModel;
-            default       -> smartModel;
-        };
-
-        log.info("Using model: {}", selectedModel);
-
         Prompt prompt = new PromptTemplate(templateResource)
                 .create(Map.of(
                         "context",  context,
@@ -72,13 +67,23 @@ public class ChatServiceImpl implements ChatService {
 
         log.debug("LLM prompt content: {}", prompt.getContents());
 
-        String response = chatClient
+        var requestSpec = chatClient
                 .prompt(prompt)
-                .options(OllamaChatOptions.builder().model(selectedModel).build())
-                .tools(paceCalculatorTool, nutritionTool)
-                .call()
-                .content();
+                .tools(paceCalculatorTool, nutritionTool);
 
+        if ("ollama".equals(activeProvider)) {
+            String selectedModel = switch (model == null ? "" : model.toLowerCase()) {
+                case "fast"   -> fastModel;
+                case "bielik" -> bielikModel;
+                default       -> smartModel;
+            };
+            log.info("Using Ollama model: {}", selectedModel);
+            requestSpec = requestSpec.options(OllamaChatOptions.builder().model(selectedModel));
+        } else {
+            log.info("Using non-Ollama provider, model from config");
+        }
+
+        String response = requestSpec.call().content();
         log.debug("LLM response length: {} chars", response.length());
         return response;
     }

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.14</version>
+        <version>4.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -26,7 +26,7 @@
             <dependency>
                 <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-bom</artifactId>
-                <version>1.1.6</version>
+                <version>2.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -38,6 +38,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- TestContainers BOM — Spring Boot 4.x nie zarządza wersjami TC -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>1.21.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -46,6 +54,14 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-ollama</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-google-genai</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
@@ -70,13 +86,15 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.8.8</version>
+            <version>3.0.3</version>
         </dependency>
 
         <!-- Database tools -->
+        <!-- Spring Boot 4.x — LiquibaseAutoConfiguration przeniesiona z spring-boot-autoconfigure
+             do osobnego modułu; goły liquibase-core już nie wystarcza do autokonfiguracji. -->
         <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-liquibase</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -126,6 +144,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Spring Boot 4.x — @WebMvcTest przeniesiony do osobnego artefaktu -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
@@ -147,10 +171,13 @@
             <version>4.2.1</version>
             <scope>test</scope>
         </dependency>
-        <!-- REST Assured — E2E API tests -->
+        <!-- REST Assured — E2E API tests (wersja jawna — Spring Boot 4.x nie zarządza)
+             6.0.1, nie 5.5.0: 5.x buduje na Groovy 4, a Boot 4.1 BOM zarządza Groovy 5.0.6 —
+             ta niezgodność powodowała NPE w ClosureMetaClass przy GET z body. -->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <version>6.0.1</version>
             <scope>test</scope>
         </dependency>
         <!-- Allure — test reporting -->
@@ -247,14 +274,15 @@
     <build>
         <plugins>
             <!-- Wyklucza Cucumber engine z Surefire — scenariusze .feature uruchamiane wyłącznie
-                 przez Failsafe w profilu cucumber. Bez tego Surefire krasuje przy mvn clean install. -->
+                 przez Failsafe w profilu cucumber. Bez tego Surefire krasuje przy mvn clean install.
+                 Surefire 3.5.6 (Spring Boot 4.x): excludedEngines → excludeJUnit5Engines -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <excludedEngines>
-                        <excludedEngine>cucumber</excludedEngine>
-                    </excludedEngines>
+                    <excludeJUnit5Engines>
+                        <engine>cucumber</engine>
+                    </excludeJUnit5Engines>
                 </configuration>
             </plugin>
             <!-- Allure Maven Plugin — generuje raport HTML z target/allure-results -->
