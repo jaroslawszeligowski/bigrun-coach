@@ -6,7 +6,7 @@
 > the app retrieves relevant answers from a curated knowledge base (RAG) and performs calculations
 > via Tool Calling (`@Tool` methods for pace and hydration).
 >
-> Portfolio project built with Java 21 · Spring Boot 3.5 · Spring AI 1.1 · React 19.
+> Portfolio project built with Java 21 · Spring Boot 4.1 · Spring AI 2.0 · React 19.
 > 
 > Covered by a 5-level test suite: unit (JUnit 5 + Mockito), integration (TestContainers + WireMock),
 > BDD (Cucumber + Gherkin), API smoke (Newman), and UI E2E (Selenium 4 + Grid, 3 browsers).
@@ -32,7 +32,7 @@
 ## Repository structure
 
 ```
-bigrun-coach/           # Backend — Spring Boot 3.5 / Java 21
+bigrun-coach/           # Backend — Spring Boot 4.1 / Java 21
 bigrun-coach-ui/        # Frontend — React 19 + TypeScript + Vite
 bigrun-coach-se/        # E2E tests — Selenium 4 + JUnit 5 + Grid
 ```
@@ -134,14 +134,13 @@ Backend logs showing Tool Calling in action:
 
 ## Quick Start — Gemini / OpenAI
 
-> Gemini and OpenAI providers are configured and the project is architecturally prepared for them.
-> Full multi-provider support is a planned milestone pending migration to Spring AI 2.x.
+> Gemini and OpenAI starters are wired in via Spring AI 2.0 (migrated from 1.1.6 — see Tech Stack below).
+> Switching provider is a single `AI_PROVIDER` variable, zero code changes.
 
 **Gemini** (free key at [aistudio.google.com](https://aistudio.google.com)):
 
 ```env
-OLLAMA_ENABLED=false
-GEMINI_ENABLED=true
+AI_PROVIDER=google-genai
 GEMINI_API_KEY=<your-key>
 GEMINI_CHAT_MODEL=gemini-2.0-flash
 GEMINI_EMBEDDING_MODEL=text-embedding-004
@@ -150,8 +149,7 @@ GEMINI_EMBEDDING_MODEL=text-embedding-004
 **OpenAI** (paid, [platform.openai.com](https://platform.openai.com)):
 
 ```env
-OLLAMA_ENABLED=false
-OPENAI_ENABLED=true
+AI_PROVIDER=openai
 OPENAI_API_KEY=<your-key>
 OPENAI_CHAT_MODEL=gpt-4o-mini
 OPENAI_EMBEDDING_MODEL=text-embedding-3-small
@@ -174,10 +172,10 @@ cd bigrun-coach && docker-compose up --build
 | Layer | Technology | Version |
 |-------|-----------|---------|
 | Language | Java | 21 |
-| Framework | Spring Boot | 3.5.14 |
-| AI Orchestration | Spring AI | 1.1.6 |
+| Framework | Spring Boot | 4.1.0 |
+| AI Orchestration | Spring AI | 2.0.0 |
 | Vector Store | PostgreSQL + pgvector | 16 |
-| DB Migrations | Liquibase | 4.x |
+| DB Migrations | Liquibase | 5.0.3 |
 | Frontend | React + TypeScript | 19 / 6.0.2 |
 | Frontend Build | Vite + Tailwind CSS | 8.0.12 / 4.3.0 |
 | E2E Browser Tests | Selenium Grid | 4.21.0 |
@@ -190,7 +188,7 @@ cd bigrun-coach && docker-compose up --build
 | JUnit 5 + Mockito | unit tests, service layer |
 | TestContainers | real PostgreSQL in integration tests |
 | WireMock | Ollama HTTP stubs (chat + embedding) |
-| REST Assured | integration + E2E API tests |
+| REST Assured 6.0.1 | integration + E2E API tests |
 | Cucumber 7 + Gherkin | BDD — 7 scenarios in Polish (`.feature`) |
 | Selenium 4 + WebDriverManager | UI E2E — Chrome / Firefox |
 | Page Object Model | `ChatPage.java` — all locators and helpers |
