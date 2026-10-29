@@ -1,0 +1,12 @@
+services:
+  playwright-server:
+    image: mcr.microsoft.com/playwright:v1.64.0-noble   # wersja = biblioteka Java 1.64.0
+    container_name: pw-server
+    init: true                                           # poprawne zamykanie procesów przeglądarek
+    user: pwuser                                         # nie root
+    working_dir: /home/pwuser
+    ports:
+      - "3000:3000"
+    environment:
+      - DEBUG=pw:server                                  # log każdego połączenia
+    command: ["/bin/sh", "-c", "npx -y playwright@1.64.0 run-server --port 3000 --host 0.0.0.0"]
