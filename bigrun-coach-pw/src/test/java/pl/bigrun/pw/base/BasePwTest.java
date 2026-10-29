@@ -6,6 +6,8 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Tracing;
+import io.qameta.allure.Allure;
+import io.qameta.allure.util.ResultsUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 /**
  * Project: bigrun-coach
@@ -39,6 +42,7 @@ public abstract class BasePwTest {
     private static final boolean HEADLESS  = Boolean.parseBoolean(System.getProperty("headless", "true"));
     private static final String WS_URL     = System.getProperty("pw.ws.url");
     private static final Path TRACES_DIR   = Paths.get("target", "traces");
+    private static final Set<String> SUITE_LABELS = Set.of("parentSuite", "suite", "subSuite");
 
     private static Playwright playwright;
     private static Browser browser;
@@ -75,6 +79,7 @@ public abstract class BasePwTest {
 
     @BeforeEach
     void createContextAndPage() {
+        labelAllureResult();
         context = browser.newContext(new Browser.NewContextOptions()
                 .setBaseURL(BASE_URL)
                 .setViewportSize(1280, 800));
@@ -99,6 +104,20 @@ public abstract class BasePwTest {
         if (playwright != null) {
             playwright.close();
         }
+    }
+
+    // Allure: drzewo Suites „Playwright → klasa → przeglądarka” (wspólny raport z Selenium w Jenkinsie)
+    // + historyId rozszerzony o przeglądarkę — Allure liczy go z ID testu JUnit, więc bez tego
+    // ten sam test z 3 przeglądarek „zlałby się” w jeden wynik z powtórzeniami
+    private void labelAllureResult() {
+        Allure.parameter("browser", BROWSER);
+        Allure.getLifecycle().updateTestCase(result -> {
+            result.getLabels().removeIf(label -> SUITE_LABELS.contains(label.getName()));
+            result.getLabels().add(ResultsUtils.createParentSuiteLabel("Playwright"));
+            result.getLabels().add(ResultsUtils.createSuiteLabel(getClass().getSimpleName()));
+            result.getLabels().add(ResultsUtils.createSubSuiteLabel(BROWSER));
+            result.setHistoryId(result.getHistoryId() + "-" + BROWSER);
+        });
     }
 
     private static BrowserType browserType(Playwright playwright) {
