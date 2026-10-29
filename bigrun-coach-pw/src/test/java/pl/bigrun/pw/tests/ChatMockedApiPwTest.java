@@ -81,7 +81,8 @@ class ChatMockedApiPwTest extends BasePwTest {
 
         chat.sendMessage("test");
 
-        assertThat(chat.errorMessage()).hasText("Error 500: LLM unavailable");
+        // element błędu zawiera ikonę "✕" przed treścią — sprawdzamy samą treść
+        assertThat(chat.errorMessage()).containsText("Error 500: LLM unavailable");
     }
 
     @Test
