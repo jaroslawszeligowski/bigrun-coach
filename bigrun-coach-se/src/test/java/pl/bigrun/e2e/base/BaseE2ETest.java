@@ -21,6 +21,8 @@
 package pl.bigrun.e2e.base;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Allure;
+import io.qameta.allure.util.ResultsUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -36,6 +38,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URI;
 import java.time.Duration;
+import java.util.Set;
 
 @Tag("e2e")
 public abstract class BaseE2ETest {
@@ -44,12 +47,14 @@ public abstract class BaseE2ETest {
 
     private static final String BROWSER  = System.getProperty("browser", "chrome");
     private static final String GRID_URL = System.getProperty("grid.url");
+    private static final Set<String> SUITE_LABELS = Set.of("parentSuite", "suite", "subSuite");
 
     protected WebDriver driver;
     protected WebDriverWait wait;
 
     @BeforeEach
     void setUp() throws Exception {
+        labelAllureResult();
         driver = GRID_URL != null ? buildRemoteDriver() : buildLocalDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get(BASE_URL);
@@ -60,6 +65,20 @@ public abstract class BaseE2ETest {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    // Allure: drzewo Suites „Selenium → klasa → przeglądarka” (wspólny raport z Playwright w Jenkinsie)
+    // + historyId rozszerzony o przeglądarkę — Allure liczy go z ID testu JUnit, więc bez tego
+    // ten sam test z Chrome i Firefox „zlałby się” w jeden wynik z powtórzeniami
+    private void labelAllureResult() {
+        Allure.parameter("browser", BROWSER);
+        Allure.getLifecycle().updateTestCase(result -> {
+            result.getLabels().removeIf(label -> SUITE_LABELS.contains(label.getName()));
+            result.getLabels().add(ResultsUtils.createParentSuiteLabel("Selenium"));
+            result.getLabels().add(ResultsUtils.createSuiteLabel(getClass().getSimpleName()));
+            result.getLabels().add(ResultsUtils.createSubSuiteLabel(BROWSER));
+            result.setHistoryId(result.getHistoryId() + "-" + BROWSER);
+        });
     }
 
     private WebDriver buildLocalDriver() {

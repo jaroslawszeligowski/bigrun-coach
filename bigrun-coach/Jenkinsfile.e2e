@@ -2,6 +2,11 @@ pipeline {
     agent any
     tools { maven 'Maven 3.9' }
 
+    environment {
+        // Playwright w trybie zdalnym — przeglądarki są w kontenerze pw-server, nie w Jenkinsie
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = '1'
+    }
+
     stages {
         stage('Stack Start') {
             steps {
@@ -35,19 +40,73 @@ EOF
                 }
             }
         }
+        // catchError — czerwone testy Selenium oznaczają build jako FAILURE, ale nie zatrzymują stage'y Playwright
         stage('E2E Tests') {
             parallel {
                 stage('E2E Chrome') {
                     steps {
                         dir('bigrun-coach-se') {
-                            sh 'mvn test -Dbrowser=chrome -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                                sh 'mvn test -Dbrowser=chrome -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
+                            }
                         }
                     }
                 }
                 stage('E2E Firefox') {
                     steps {
                         dir('bigrun-coach-se') {
-                            sh 'mvn test -Dbrowser=firefox -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                                sh 'mvn test -Dbrowser=firefox -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage('PW Server Start') {
+            steps {
+                dir('bigrun-coach-pw') {
+                    sh 'docker-compose up -d'
+                    // czekamy na gotowość serwera zamiast stałego sleep (npx pobiera pakiet przy starcie)
+                    sh 'timeout 90 sh -c "until docker logs pw-server 2>&1 | grep -q \\"Listening on\\"; do sleep 2; done"'
+                }
+            }
+        }
+        // kompilacja raz — równoległe stage'e nie kompilują jednocześnie do tego samego target/
+        stage('PW Build') {
+            steps {
+                dir('bigrun-coach-pw') {
+                    sh 'mvn -q test-compile'
+                }
+            }
+        }
+        // na wzór Selenium — pełny zestaw na każdej przeglądarce, równolegle
+        stage('PW Tests') {
+            parallel {
+                stage('PW Chromium') {
+                    steps {
+                        dir('bigrun-coach-pw') {
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                                sh 'mvn test -Dbrowser=chromium -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
+                            }
+                        }
+                    }
+                }
+                stage('PW Firefox') {
+                    steps {przed
+                        dir('bigrun-coach-pw') {
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                                sh 'mvn test -Dbrowser=firefox -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
+                            }
+                        }
+                    }
+                }
+                stage('PW WebKit') {
+                    steps {
+                        dir('bigrun-coach-pw') {
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                                sh 'mvn test -Dbrowser=webkit -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
+                            }
                         }
                     }
                 }
@@ -57,7 +116,18 @@ EOF
     post {
         always {
             junit testResults: 'bigrun-coach-se/target/surefire-reports/*.xml', allowEmptyResults: true
-            allure includeProperties: false, results: [[path: 'bigrun-coach-se/target/allure-results']]
+            junit testResults: 'bigrun-coach-pw/target/surefire-reports/**/*.xml', allowEmptyResults: true
+            archiveArtifacts artifacts: 'bigrun-coach-pw/target/traces/**', allowEmptyArchive: true
+            // jeden wspólny raport Allure: Selenium + Playwright (3 przeglądarki)
+            allure includeProperties: false, results: [
+                [path: 'bigrun-coach-se/target/allure-results'],
+                [path: 'bigrun-coach-pw/target/allure-results/chromium'],
+                [path: 'bigrun-coach-pw/target/allure-results/firefox'],
+                [path: 'bigrun-coach-pw/target/allure-results/webkit']
+            ]
+            dir('bigrun-coach-pw') {
+                sh 'docker-compose down'
+            }
             dir('bigrun-coach-se') {
                 sh 'docker-compose down'
             }
