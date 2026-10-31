@@ -93,7 +93,7 @@ EOF
                     }
                 }
                 stage('PW Firefox') {
-                    steps {przed
+                    steps {
                         dir('bigrun-coach-pw') {
                             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                                 sh 'mvn test -Dbrowser=firefox -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
