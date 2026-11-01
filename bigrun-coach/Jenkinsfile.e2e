@@ -47,7 +47,7 @@ EOF
                     steps {
                         dir('bigrun-coach-se') {
                             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                                sh 'mvn test -Dbrowser=chrome -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
+                                sh 'mvn test -Dbrowser=chrome -Dprovider=ollama -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
                             }
                         }
                     }
@@ -56,7 +56,7 @@ EOF
                     steps {
                         dir('bigrun-coach-se') {
                             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                                sh 'mvn test -Dbrowser=firefox -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
+                                sh 'mvn test -Dbrowser=firefox -Dprovider=ollama -Dgrid.url=http://host.docker.internal:4444 -Dbase.url=http://host.docker.internal:80'
                             }
                         }
                     }
@@ -87,7 +87,7 @@ EOF
                     steps {
                         dir('bigrun-coach-pw') {
                             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                                sh 'mvn test -Dbrowser=chromium -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
+                                sh 'mvn test -Dbrowser=chromium -Dprovider=ollama -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
                             }
                         }
                     }
@@ -96,7 +96,7 @@ EOF
                     steps {
                         dir('bigrun-coach-pw') {
                             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                                sh 'mvn test -Dbrowser=firefox -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
+                                sh 'mvn test -Dbrowser=firefox -Dprovider=ollama -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
                             }
                         }
                     }
@@ -105,7 +105,7 @@ EOF
                     steps {
                         dir('bigrun-coach-pw') {
                             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                                sh 'mvn test -Dbrowser=webkit -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
+                                sh 'mvn test -Dbrowser=webkit -Dprovider=ollama -Dpw.ws.url=ws://host.docker.internal:3000/ -Dbase.url=http://host.docker.internal:80'
                             }
                         }
                     }
