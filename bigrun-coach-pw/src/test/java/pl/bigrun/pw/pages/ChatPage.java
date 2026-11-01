@@ -23,8 +23,9 @@ import com.microsoft.playwright.Page;
  */
 public class ChatPage {
 
-    // Odpowiedź LLM trwa kilka–kilkanaście sekund — jak longWait (30 s) w Selenium
-    public static final double RESPONSE_TIMEOUT_MS = 30_000;
+    // Odpowiedź LLM trwa kilka–kilkanaście sekund, ale w CI przeglądarki działają równolegle
+    // i pytania czekają w kolejce Ollamy — 90 s (jak longWait w Selenium)
+    public static final double RESPONSE_TIMEOUT_MS = 90_000;
 
     private final Page page;
 

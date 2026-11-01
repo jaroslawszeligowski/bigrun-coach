@@ -42,7 +42,8 @@ public class ChatPage {
     public ChatPage(WebDriver driver, WebDriverWait wait) {
         this.driver   = driver;
         this.wait     = wait;
-        this.longWait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        // 90 s — w CI przeglądarki działają równolegle i pytania czekają w kolejce Ollamy
+        this.longWait = new WebDriverWait(driver, Duration.ofSeconds(90));
     }
 
     // --- Akcje ---
