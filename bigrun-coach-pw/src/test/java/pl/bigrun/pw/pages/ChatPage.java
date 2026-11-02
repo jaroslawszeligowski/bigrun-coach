@@ -3,6 +3,8 @@ package pl.bigrun.pw.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
 /**
  * Project: bigrun-coach
  * File: ChatPage
@@ -125,14 +127,18 @@ public class ChatPage {
         return exampleQuery(group, index).innerText();
     }
 
-    // Config z backendu ładuje się asynchronicznie — najpierw czekamy na tag providera,
-    // dopiero potem sprawdzamy przycisk (w Selenium sprawdzenie było natychmiastowe)
+    // Config z backendu ładuje się asynchronicznie — tag providera istnieje od razu z tekstem
+    // zastępczym "LLM" (App.tsx), więc czekamy aż zmieni się na właściwego providera
     public boolean isFastButtonPresent() {
-        providerTag().waitFor();
+        waitForConfigLoaded();
         return modelButton("fast").count() > 0;
     }
 
     // --- Waity ---
+
+    public void waitForConfigLoaded() {
+        assertThat(providerTag()).not().hasText("LLM");
+    }
 
     public void waitForResponse() {
         responseOutput().waitFor(new Locator.WaitForOptions().setTimeout(RESPONSE_TIMEOUT_MS));

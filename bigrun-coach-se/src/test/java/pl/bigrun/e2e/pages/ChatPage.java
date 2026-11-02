@@ -84,7 +84,10 @@ public class ChatPage {
     }
 
     public void clickModelButton(String model) {
-        driver.findElement(By.cssSelector("[data-testid=model-button-" + model + "]")).click();
+        waitForConfigLoaded();
+        wait.until(ExpectedConditions.elementToBeClickable(
+            By.cssSelector("[data-testid=model-button-" + model + "]")
+        )).click();
     }
 
     // --- Odczyty ---
@@ -143,7 +146,9 @@ public class ChatPage {
         return !driver.findElements(ERROR_MESSAGE).isEmpty();
     }
 
+    // Przycisk fast renderuje się dopiero po załadowaniu /api/v1/config — bez czekania test jest flaky
     public boolean isFastButtonPresent() {
+        waitForConfigLoaded();
         return !driver.findElements(By.cssSelector("[data-testid=model-button-fast]")).isEmpty();
     }
 
@@ -161,6 +166,11 @@ public class ChatPage {
     }
 
     // --- Waity ---
+
+    // Przed załadowaniem configu tag providera ma tekst zastępczy "LLM" (App.tsx)
+    public void waitForConfigLoaded() {
+        wait.until(ExpectedConditions.not(ExpectedConditions.textToBe(PROVIDER_TAG, "LLM")));
+    }
 
     public void waitForResponse() {
         longWait.until(ExpectedConditions.visibilityOfElementLocated(RESPONSE_OUTPUT));
