@@ -15,6 +15,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -27,7 +31,7 @@ import java.util.Set;
  * Base class for Playwright E2E tests — one browser per test class,
  * fresh BrowserContext and Page per test (full isolation, fast start).
  * Supports local and remote (Playwright Server) execution and saves
- * a trace (target/traces/*.zip) for every failed test.
+ * a trace (target/traces/*.zip) for every failed test, attached to the Allure result.
  * ------------------------------------------------------------------------
  *
  * @author bigrun
@@ -51,21 +55,24 @@ public abstract class BasePwTest {
     protected Page page;
 
     // Uruchamia się po teście, a przed @AfterEach — kontekst jest jeszcze otwarty.
-    // Trace zapisywany tylko dla nieudanych testów (odpowiednik "retain-on-failure").
+    // Trace zapisywany tylko dla nieudanych testów (odpowiednik "retain-on-failure")
+    // i dołączany do wyniku w Allure — do pobrania prosto z raportu.
     @RegisterExtension
     final AfterTestExecutionCallback traceOnFailure = extensionContext -> {
         if (context == null) {
             return;
         }
-        Tracing.StopOptions stopOptions = new Tracing.StopOptions();
-        if (extensionContext.getExecutionException().isPresent()) {
-            String fileName = extensionContext.getRequiredTestClass().getSimpleName() + "_"
-                    + extensionContext.getDisplayName()
-                            .replaceAll("\\(\\)$", "")
-                            .replaceAll("[^A-Za-z0-9._-]", "_") + ".zip";
-            stopOptions.setPath(TRACES_DIR.resolve(fileName));
+        if (extensionContext.getExecutionException().isEmpty()) {
+            context.tracing().stop();
+            return;
         }
-        context.tracing().stop(stopOptions);
+        String fileName = extensionContext.getRequiredTestClass().getSimpleName() + "_"
+                + extensionContext.getDisplayName()
+                        .replaceAll("\\(\\)$", "")
+                        .replaceAll("[^A-Za-z0-9._-]", "_") + ".zip";
+        Path tracePath = TRACES_DIR.resolve(fileName);
+        context.tracing().stop(new Tracing.StopOptions().setPath(tracePath));
+        attachTraceToAllure(tracePath);
     };
 
     @BeforeAll
@@ -103,6 +110,15 @@ public abstract class BasePwTest {
         }
         if (playwright != null) {
             playwright.close();
+        }
+    }
+
+    private static void attachTraceToAllure(Path tracePath) {
+        try (InputStream trace = Files.newInputStream(tracePath)) {
+            Allure.addAttachment("Playwright trace (trace.playwright.dev)",
+                    "application/zip", trace, "zip");
+        } catch (IOException e) {
+            throw new UncheckedIOException("Cannot attach trace " + tracePath, e);
         }
     }
 
